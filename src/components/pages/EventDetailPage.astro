@@ -1,0 +1,140 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry, render } from 'astro:content';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+const { eventId, lang } = Astro.props as { eventId: string; lang: Lang };
+const event = await getEntry('eventos', eventId);
+if (!event) {
+  throw new Error(`Event not found: ${eventId}`);
+}
+
+const t = useTranslations(lang);
+const { Content } = await render(event);
+const base = lang === 'es' ? '/es' : '';
+const eventsPath = lang === 'ca' ? 'esdeveniments' : 'eventos';
+
+const dateStr = event.data.startDate.toLocaleDateString(lang === 'ca' ? 'ca-ES' : 'es-ES', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+
+const timeStr = event.data.startDate.toLocaleTimeString(lang === 'ca' ? 'ca-ES' : 'es-ES', {
+  hour: '2-digit',
+  minute: '2-digit',
+});
+---
+
+<BaseLayout title={event.data.title} description={event.body?.slice(0, 160)} heroImage={event.data.image} {lang}>
+  <article>
+    {event.data.image && (
+      <div class="event-hero">
+        <img src={event.data.image} alt={event.data.title} class="img-cover" />
+      </div>
+    )}
+    <div class="container section">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={`${base}/`}>{t('nav.home')}</a>
+        <span aria-hidden="true">›</span>
+        <a href={`${base}/${eventsPath}/`}>{t('nav.events')}</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">{event.data.title}</span>
+      </nav>
+
+      <header class="event-header">
+        <p class="event-meta">
+          <span>{dateStr}</span>
+          <span aria-hidden="true">•</span>
+          <span>{timeStr}</span>
+        </p>
+        <h1>{event.data.title}</h1>
+        <p class="event-location">
+          <strong>{t('events.location')}:</strong> {event.data.location}
+        </p>
+        {event.data.ticketUrl ? (
+          <a href={event.data.ticketUrl} class="btn btn--accent" target="_blank" rel="noopener noreferrer">
+            {t('events.tickets')}
+          </a>
+        ) : (
+          <p class="event-free">{t('events.free')}</p>
+        )}
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <div class="event-back">
+        <a href={`${base}/${eventsPath}/`} class="btn btn--outline">← {t('events.title')}</a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .event-hero {
+    height: clamp(220px, 35vw, 420px);
+    overflow: hidden;
+  }
+
+  .event-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-brand);
+  }
+
+  .event-header {
+    margin-bottom: 2.5rem;
+  }
+
+  .event-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--color-accent);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    margin: 0 0 0.75rem;
+    text-transform: uppercase;
+  }
+
+  .event-header h1 {
+    margin: 0 0 0.75rem;
+  }
+
+  .event-location,
+  .event-free {
+    font-size: 1.05rem;
+    color: var(--color-text-muted);
+    margin: 0 0 1rem;
+  }
+
+  .event-back {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+</style>

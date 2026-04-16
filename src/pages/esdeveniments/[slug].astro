@@ -1,0 +1,19 @@
+---
+import EventDetailPage from '../../components/pages/EventDetailPage.astro';
+import { getCollection } from 'astro:content';
+import { parseContentPath } from '../../i18n/utils';
+
+export async function getStaticPaths() {
+  const events = await getCollection('eventos');
+  return events
+    .filter(event => parseContentPath(event.id).lang === 'ca')
+    .map(event => ({
+      params: { slug: parseContentPath(event.id).slug },
+      props: { eventId: event.id, lang: 'ca' as const },
+    }));
+}
+
+const { eventId, lang } = Astro.props;
+---
+
+<EventDetailPage {eventId} {lang} />

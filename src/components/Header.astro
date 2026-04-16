@@ -35,16 +35,23 @@ const navLinks = [
     <!-- Navegación principal (desktop) -->
     <nav class="main-nav" aria-label={lang === 'ca' ? 'Navegació principal' : 'Navegación principal'}>
       <ul role="list">
-        {navLinks.map(({ key, href }) => (
-          <li>
-            <a
-              href={href}
-              class:list={['main-nav__link', { 'is-active': Astro.url.pathname === href || Astro.url.pathname === href.slice(0, -1) }]}
-            >
-              {t(key)}
-            </a>
-          </li>
-        ))}
+        {navLinks.map(({ key, href }) => {
+          const isHome = href === `${base}/`;
+          const isActive = isHome
+            ? Astro.url.pathname === href || Astro.url.pathname === href.slice(0, -1)
+            : Astro.url.pathname.startsWith(href);
+          return (
+            <li>
+              <a
+                href={href}
+                class:list={['main-nav__link', { 'is-active': isActive }]}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {t(key)}
+              </a>
+            </li>
+          );
+        })}
       </ul>
     </nav>
 
