@@ -36,4 +36,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           # Update "escola-musica" to match your Cloudflare Pages project name
-          command: pages deploy dist --project-name=escola-musica
+          command: pages deploy dist --project-name=escola-website
