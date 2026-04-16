@@ -19,7 +19,6 @@ const navLinks = [
   { key: 'nav.teachers' as const, href: `${base}/${lang === 'ca' ? 'professors' : 'profesores'}/` },
   { key: 'nav.events' as const, href: `${base}/${lang === 'ca' ? 'esdeveniments' : 'eventos'}/` },
   { key: 'nav.blog' as const, href: `${base}/blog/` },
-  { key: 'nav.gallery' as const, href: `${base}/${lang === 'ca' ? 'galeria' : 'galeria'}/` },
   { key: 'nav.contact' as const, href: `${base}/${lang === 'ca' ? 'contacte' : 'contacto'}/` },
 ];
 ---
@@ -60,54 +59,10 @@ const navLinks = [
       <a href={alternateLangUrl} class="lang-switch" hreflang={lang === 'ca' ? 'es' : 'ca'}>
         {t('lang.switch')}
       </a>
-
-      <!-- Menú hamburguesa (móvil) -->
-      <button
-        class="menu-toggle"
-        aria-controls="mobile-menu"
-        aria-expanded="false"
-        aria-label={lang === 'ca' ? 'Obrir menú' : 'Abrir menú'}
-        id="menu-toggle-btn"
-      >
-        <span class="hamburger" aria-hidden="true"></span>
-      </button>
     </div>
   </div>
-
-  <!-- Menú móvil -->
-  <nav
-    class="mobile-nav"
-    id="mobile-menu"
-    aria-label={lang === 'ca' ? 'Menú mòbil' : 'Menú móvil'}
-    hidden
-  >
-    <ul role="list">
-      {navLinks.map(({ key, href }) => (
-        <li>
-          <a href={href} class="mobile-nav__link">
-            {t(key)}
-          </a>
-        </li>
-      ))}
-      <li>
-        <a href={alternateLangUrl} class="mobile-nav__link mobile-nav__lang">
-          {t('lang.switch')}
-        </a>
-      </li>
-    </ul>
-  </nav>
 </header>
 
-<script>
-  const toggle = document.getElementById('menu-toggle-btn');
-  const menu = document.getElementById('mobile-menu');
-
-  toggle?.addEventListener('click', () => {
-    const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!expanded));
-    menu?.toggleAttribute('hidden');
-  });
-</script>
 
 <style>
   .site-header {
@@ -142,17 +97,7 @@ const navLinks = [
   }
 
   .main-nav {
-    display: none;
-  }
-
-  @media (min-width: 900px) {
-    .main-nav {
-      display: block;
-    }
-
-    .menu-toggle {
-      display: none;
-    }
+    display: block;
   }
 
   .main-nav ul {
@@ -205,78 +150,5 @@ const navLinks = [
     color: var(--color-brand);
   }
 
-  /* Hamburguesa */
-  .menu-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-  }
 
-  .hamburger,
-  .hamburger::before,
-  .hamburger::after {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background-color: #ffffff;
-    transition: transform 0.25s;
-  }
-
-  .hamburger {
-    position: relative;
-  }
-
-  .hamburger::before,
-  .hamburger::after {
-    content: '';
-    position: absolute;
-    left: 0;
-  }
-
-  .hamburger::before { top: -6px; }
-  .hamburger::after  { top: 6px; }
-
-  /* Menú móvil */
-  .mobile-nav {
-    background-color: var(--color-brand-dark);
-    border-top: 1px solid var(--color-border-dark);
-  }
-
-  .mobile-nav[hidden] {
-    display: none;
-  }
-
-  .mobile-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0.5rem 0;
-  }
-
-  .mobile-nav__link {
-    display: block;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.85);
-    text-decoration: none;
-    transition: color 0.15s;
-  }
-
-  .mobile-nav__link:hover {
-    color: var(--color-accent);
-  }
-
-  .mobile-nav__lang {
-    border-top: 1px solid var(--color-border-dark);
-    margin-top: 0.5rem;
-    padding-top: 1rem;
-    color: var(--color-accent);
-    font-size: 0.9rem;
-  }
 </style>

@@ -125,24 +125,6 @@ collections:
       - { label: Descripción, name: body, widget: markdown, i18n: true }
       - { label: Enlace de entradas, name: ticketUrl, widget: string, required: false, i18n: duplicate }
 
-  # ── Galería ──────────────────────────────────
-  - name: galeria
-    label: Galería
-    label_singular: Álbum
-    folder: src/content/galeria
-    create: true
-    slug: "{{slug}}"
-    fields:
-      - { label: Título, name: title, widget: string }
-      - { label: Fecha, name: date, widget: datetime }
-      - { label: Descripción, name: description, widget: text, required: false }
-      - label: Fotos
-        name: photos
-        widget: list
-        fields:
-          - { label: Imagen, name: src, widget: image }
-          - { label: Alt / descripción, name: alt, widget: string }
-
   # ── Configuración del sitio ──────────────────
   - name: configuracion
     label: Configuración

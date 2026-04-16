@@ -46,27 +46,9 @@ const eventosCollection = defineCollection({
   }),
 });
 
-const galeriaCollection = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/galeria' }),
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    description: z.string().optional(),
-    photos: z
-      .array(
-        z.object({
-          src: z.string(),
-          alt: z.string(),
-        }),
-      )
-      .default([]),
-  }),
-});
-
 export const collections = {
   blog: blogCollection,
   cursos: cursosCollection,
   profesores: profesoresCollection,
   eventos: eventosCollection,
-  galeria: galeriaCollection,
 };
