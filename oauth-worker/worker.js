@@ -12,6 +12,7 @@
 const ALLOWED_ORIGINS = [
   // Actualiza con el dominio real de tu sitio
   'https://escolamestreferrero.com',
+  'https://oauth.escolamestreferrero.com',
 ];
 
 const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
@@ -34,10 +35,14 @@ export default {
 
     // /auth → redirige a GitHub
     if (url.pathname === '/auth') {
+      const state = Array.from(crypto.getRandomValues(new Uint8Array(4)))
+        .map((b) => b.toString(16).padStart(2, '0'))
+        .join('');
       const params = new URLSearchParams({
         client_id: env.GITHUB_CLIENT_ID,
         scope: 'repo,user',
         redirect_uri: `${url.origin}/callback`,
+        state,
       });
       return Response.redirect(`${GITHUB_AUTH_URL}?${params}`, 302);
     }
@@ -65,14 +70,30 @@ export default {
         return new Response(`OAuth error: ${data.error_description}`, { status: 400 });
       }
 
-      // Decap espera que la ventana se cierre con postMessage
-      const html = `<!doctype html><html><body><script>
-        window.opener.postMessage(
-          'authorization:github:success:${JSON.stringify({ token: data.access_token, provider: 'github' })}',
-          '*'
-        );
-        window.close();
-      </script></body></html>`;
+      // Decap CMS usa un handshake de dos pasos:
+      // 1. El popup envía "authorizing:github" al opener para indicar que está listo.
+      // 2. Decap responde con cualquier mensaje.
+      // 3. El popup entonces envía el token y se cierra.
+      // Sin este handshake, la ventana se cierra antes de que Decap procese el token.
+      const token = data.access_token;
+      const html = `<!doctype html>
+<html>
+<head>
+  <script>
+    const receiveMessage = (message) => {
+      window.opener.postMessage(
+        'authorization:github:success:' + JSON.stringify({ token: ${JSON.stringify(token)}, provider: 'github' }),
+        '*'
+      );
+      window.removeEventListener('message', receiveMessage, false);
+      setTimeout(function () { window.close(); }, 100);
+    };
+    window.addEventListener('message', receiveMessage, false);
+    window.opener.postMessage('authorizing:github', '*');
+  <\/script>
+</head>
+<body><p>Autoritzant Decap CMS...</p></body>
+</html>`;
 
       return new Response(html, {
         headers: { 'Content-Type': 'text/html', ...corsHeaders },
