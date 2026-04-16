@@ -9,10 +9,10 @@ export async function getStaticPaths() {
     .filter(p => parseContentPath(p.id).lang === 'es' && !p.data.draft)
     .map(post => ({
       params: { slug: parseContentPath(post.id).slug },
-      props: { post, lang: 'es' as const },
+      props: { postId: post.id, lang: 'es' as const },
     }));
 }
 
-const { post, lang } = Astro.props;
+const { postId, lang } = Astro.props;
 ---
-<BlogPostPage {post} {lang} />
+<BlogPostPage {postId} {lang} />

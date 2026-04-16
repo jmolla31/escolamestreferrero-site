@@ -107,9 +107,9 @@ const navLinks = [
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: var(--color-surface);
-    border-bottom: 1px solid var(--color-border);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+    background-color: var(--color-brand);
+    border-bottom: 1px solid var(--color-border-dark);
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.25);
   }
 
   .header-inner {
@@ -126,11 +126,12 @@ const navLinks = [
   }
 
   .site-logo__text {
-    font-family: 'DisplayFont', Georgia, serif;
-    font-size: 1.25rem;
+    font-family: 'Weissenhof Grotesk', system-ui, sans-serif;
+    font-size: 1.15rem;
     font-weight: 700;
-    color: var(--color-brand);
-    letter-spacing: -0.01em;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
   }
 
   .main-nav {
@@ -158,9 +159,10 @@ const navLinks = [
   .main-nav__link {
     display: block;
     padding: 0.4rem 0.75rem;
-    font-size: 0.9rem;
+    font-size: 0.88rem;
     font-weight: 500;
-    color: var(--color-text);
+    letter-spacing: 0.01em;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     border-radius: 0.25rem;
     transition: color 0.15s, background-color 0.15s;
@@ -168,8 +170,8 @@ const navLinks = [
 
   .main-nav__link:hover,
   .main-nav__link.is-active {
-    color: var(--color-brand);
-    background-color: color-mix(in srgb, var(--color-brand) 8%, transparent);
+    color: var(--color-accent);
+    background-color: rgba(255, 255, 255, 0.07);
   }
 
   .header-actions {
@@ -179,18 +181,20 @@ const navLinks = [
   }
 
   .lang-switch {
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 0.3rem 0.7rem;
-    border: 1.5px solid var(--color-border);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.8rem;
+    border: 1.5px solid var(--color-accent);
     border-radius: 99px;
     text-decoration: none;
-    color: var(--color-text);
-    transition: border-color 0.15s, color 0.15s;
+    color: var(--color-accent);
+    transition: background-color 0.15s, color 0.15s;
   }
 
   .lang-switch:hover {
-    border-color: var(--color-brand);
+    background-color: var(--color-accent);
     color: var(--color-brand);
   }
 
@@ -213,7 +217,7 @@ const navLinks = [
     display: block;
     width: 22px;
     height: 2px;
-    background-color: var(--color-text);
+    background-color: #ffffff;
     transition: transform 0.25s;
   }
 
@@ -233,8 +237,8 @@ const navLinks = [
 
   /* Menú móvil */
   .mobile-nav {
-    background-color: var(--color-surface);
-    border-top: 1px solid var(--color-border);
+    background-color: var(--color-brand-dark);
+    border-top: 1px solid var(--color-border-dark);
   }
 
   .mobile-nav[hidden] {
@@ -252,20 +256,20 @@ const navLinks = [
     padding: 0.75rem 1.5rem;
     font-size: 1rem;
     font-weight: 500;
-    color: var(--color-text);
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
     transition: color 0.15s;
   }
 
   .mobile-nav__link:hover {
-    color: var(--color-brand);
+    color: var(--color-accent);
   }
 
   .mobile-nav__lang {
-    border-top: 1px solid var(--color-border);
+    border-top: 1px solid var(--color-border-dark);
     margin-top: 0.5rem;
     padding-top: 1rem;
-    color: var(--color-text-muted);
+    color: var(--color-accent);
     font-size: 0.9rem;
   }
 </style>

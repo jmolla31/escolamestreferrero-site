@@ -48,7 +48,7 @@ const upcomingEvents = allEvents
     return eLang === lang && e.data.startDate >= now;
   })
   .sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime())
-  .slice(0, 3);
+  .slice(0, 2);
 
 // Últimas noticias
 const allPosts = await getCollection('blog');
@@ -76,6 +76,7 @@ const latestPosts = allPosts
     tagline={lang === 'ca'
       ? `Formació musical de qualitat per a tots els nivells i edats.`
       : `Formación musical de calidad para todos los niveles y edades.`}
+    bgImage="/uploads/hero/hero-main.jpg"
     {lang}
   />
 

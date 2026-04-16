@@ -2,6 +2,7 @@
 title: Guitarra
 order: 2
 level: todos
+image: /uploads/courses/guitarra.jpg
 featured: true
 shortDesc: Guitarra clàssica, espanyola o elèctrica. Classes individuals i grupals per a nens i adults de tots els nivells.
 ---

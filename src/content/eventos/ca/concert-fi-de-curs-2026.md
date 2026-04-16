@@ -1,6 +1,7 @@
 ---
 title: Concert de Fi de Curs
 startDate: 2026-06-20T19:00:00
+image: /uploads/events/concierto-fin-curso.jpg
 location: Auditori Municipal, Sala Principal
 ---
 

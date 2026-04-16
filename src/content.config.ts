@@ -1,7 +1,8 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 
 const blogCollection = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' }),
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),
@@ -12,7 +13,7 @@ const blogCollection = defineCollection({
 });
 
 const cursosCollection = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/cursos' }),
   schema: z.object({
     title: z.string(),
     order: z.number().default(99),
@@ -24,7 +25,7 @@ const cursosCollection = defineCollection({
 });
 
 const profesoresCollection = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/profesores' }),
   schema: z.object({
     name: z.string(),
     specialty: z.string(),
@@ -34,7 +35,7 @@ const profesoresCollection = defineCollection({
 });
 
 const eventosCollection = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/eventos' }),
   schema: z.object({
     title: z.string(),
     startDate: z.coerce.date(),
@@ -46,7 +47,7 @@ const eventosCollection = defineCollection({
 });
 
 const galeriaCollection = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/galeria' }),
   schema: z.object({
     title: z.string(),
     date: z.coerce.date(),

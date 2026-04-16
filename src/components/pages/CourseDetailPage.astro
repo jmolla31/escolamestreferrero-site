@@ -1,23 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
-import { useTranslations, parseContentPath } from '../../i18n/utils';
+import { getEntry, render } from 'astro:content';
+import { useTranslations } from '../../i18n/utils';
 import type { Lang } from '../../i18n/ui';
 
-export async function getStaticPaths() {
-  const courses = await getCollection('cursos');
-  return courses.map(course => {
-    const { lang, slug } = parseContentPath(course.id);
-    return {
-      params: { slug },
-      props: { course, lang },
-    };
-  });
+const { courseId, lang } = Astro.props as { courseId: string; lang: Lang };
+const course = await getEntry('cursos', courseId);
+if (!course) {
+  throw new Error(`Course not found: ${courseId}`);
 }
-
-const { course, lang } = Astro.props as { course: any; lang: Lang };
 const t = useTranslations(lang);
-const { Content } = await course.render();
+const { Content } = await render(course);
 
 const levelLabels: Record<string, { es: string; ca: string }> = {
   iniciacion: { es: 'Iniciación', ca: 'Iniciació' },

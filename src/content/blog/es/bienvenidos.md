@@ -1,6 +1,7 @@
 ---
 title: Bienvenidos a la nueva web
 date: 2026-01-15
+heroImage: /uploads/blog/nueva-web.jpg
 excerpt: Estrenamos nuestra nueva web con un diseño renovado y más contenido que nunca. ¡Te damos la bienvenida!
 draft: false
 ---

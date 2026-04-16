@@ -2,6 +2,7 @@
 title: Piano
 order: 1
 level: todos
+image: /uploads/courses/piano.jpg
 featured: true
 shortDesc: Aprende a tocar el piano desde cero o perfecciona tu técnica con profesores especializados. Clases individuales adaptadas a tu nivel.
 ---

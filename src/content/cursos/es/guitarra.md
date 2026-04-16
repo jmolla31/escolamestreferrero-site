@@ -2,6 +2,7 @@
 title: Guitarra
 order: 2
 level: todos
+image: /uploads/courses/guitarra.jpg
 featured: true
 shortDesc: Guitarra clásica, española o eléctrica. Clases individuales y grupales para niños y adultos de todos los niveles.
 ---

@@ -5,23 +5,18 @@ export default {
     extend: {
       colors: {
         brand: 'var(--color-brand)',
+        'brand-mid': 'var(--color-brand-mid)',
         'brand-dark': 'var(--color-brand-dark)',
         accent: 'var(--color-accent)',
+        'accent-dark': 'var(--color-accent-dark)',
         surface: 'var(--color-surface)',
         'surface-alt': 'var(--color-surface-alt)',
         muted: 'var(--color-text-muted)',
       },
       fontFamily: {
-        display: ['DisplayFont', 'Georgia', 'serif'],
-        body: ['system-ui', '-apple-system', 'sans-serif'],
-      },
-      typography: {
-        DEFAULT: {
-          css: {
-            '--tw-prose-headings': 'var(--color-text)',
-            '--tw-prose-body': 'var(--color-text)',
-          },
-        },
+        sans: ['Weissenhof Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
+        display: ['Weissenhof Grotesk', 'system-ui', 'sans-serif'],
+        body: ['Weissenhof Grotesk', 'system-ui', '-apple-system', 'sans-serif'],
       },
     },
   },

@@ -2,6 +2,7 @@
 title: Piano
 order: 1
 level: todos
+image: /uploads/courses/piano.jpg
 featured: true
 shortDesc: Aprèn a tocar el piano des de zero o perfecciona la teva tècnica amb professors especialitzats. Classes individuals adaptades al teu nivell.
 ---
