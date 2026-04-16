@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('about.title')} {lang}>
+  <div class="container section">
+    <SectionHeader title={t('about.title')} />
+
+    <!--
+      Edita este contenido directamente o muévelo a una colección de contenido
+      administrada desde Decap CMS (agrega una colección "páginas" si lo necesitas).
+    -->
+    <div class="prose about-content">
+      <p>
+        {lang === 'ca'
+          ? 'Benvingut a la nostra escola de música. Som un centre de formació musical dedicat a transmetre la passió per la música a totes les edats i nivells.'
+          : 'Bienvenido a nuestra escuela de música. Somos un centro de formación musical dedicado a transmitir la pasión por la música a todas las edades y niveles.'
+        }
+      </p>
+      <!-- Añade más contenido aquí -->
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-content {
+    max-width: 70ch;
+  }
+</style>

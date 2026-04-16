@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import CourseCard from '../../components/CourseCard.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, parseContentPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const allCourses = await getCollection('cursos');
+const courses = allCourses
+  .filter(c => {
+    const { lang: cLang } = parseContentPath(c.id);
+    return cLang === lang;
+  })
+  .sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title={t('courses.title')} {lang}>
+  <div class="container section">
+    <SectionHeader title={t('courses.title')} />
+    {courses.length > 0
+      ? (
+        <div class="cards-grid">
+          {courses.map(course => {
+            const { slug } = parseContentPath(course.id);
+            return (
+              <CourseCard
+                title={course.data.title}
+                shortDesc={course.data.shortDesc}
+                level={course.data.level}
+                image={course.data.image}
+                {slug}
+                {lang}
+              />
+            );
+          })}
+        </div>
+      )
+      : <p class="empty-state">
+          {lang === 'ca' ? 'Properament nous cursos.' : 'Próximamente nuevos cursos.'}
+        </p>
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .empty-state {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    padding: 3rem 0;
+    text-align: center;
+  }
+</style>

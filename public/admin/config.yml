@@ -1,0 +1,157 @@
+# ──────────────────────────────────────────────
+# Decap CMS – Configuración principal
+# ──────────────────────────────────────────────
+# Requisito previo: configurar un proxy OAuth.
+# Ver docs/decap-oauth-setup.md para instrucciones.
+# ──────────────────────────────────────────────
+
+backend:
+  name: github
+  # Actualiza con tu usuario/organización y nombre de repositorio
+  repo: TU_USUARIO/escola-musica
+  branch: main
+  # URL del proxy OAuth (Cloudflare Worker). Ver docs/decap-oauth-setup.md
+  base_url: https://TU_OAUTH_PROXY.workers.dev
+
+# Carpeta donde se guardan los archivos subidos desde el CMS
+media_folder: public/uploads
+public_folder: /uploads
+
+# ──────────────────────────────────────────────
+# Internacionalización
+# ──────────────────────────────────────────────
+i18n:
+  structure: multiple_folders
+  locales: [es, ca]
+  default_locale: es
+
+# ──────────────────────────────────────────────
+# Colecciones
+# ──────────────────────────────────────────────
+collections:
+
+  # ── Blog / Noticias ──────────────────────────
+  - name: blog
+    label: Blog / Noticias
+    label_singular: Entrada
+    folder: src/content/blog
+    create: true
+    i18n: true
+    slug: "{{slug}}"
+    preview_path: "blog/{{slug}}"
+    fields:
+      - { label: Título, name: title, widget: string, i18n: true }
+      - { label: Fecha de publicación, name: date, widget: datetime, i18n: duplicate }
+      - label: Imagen destacada
+        name: heroImage
+        widget: image
+        required: false
+        i18n: duplicate
+      - { label: Extracto, name: excerpt, widget: text, i18n: true }
+      - { label: Contenido, name: body, widget: markdown, i18n: true }
+      - { label: Borrador, name: draft, widget: boolean, default: false, i18n: duplicate }
+
+  # ── Cursos ───────────────────────────────────
+  - name: cursos
+    label: Cursos
+    label_singular: Curso
+    folder: src/content/cursos
+    create: true
+    i18n: true
+    slug: "{{slug}}"
+    preview_path: "cursos/{{slug}}"
+    fields:
+      - { label: Nombre, name: title, widget: string, i18n: true }
+      - { label: Orden, name: order, widget: number, default: 99, i18n: duplicate }
+      - label: Imagen
+        name: image
+        widget: image
+        required: false
+        i18n: duplicate
+      - label: Nivel
+        name: level
+        widget: select
+        i18n: true
+        options:
+          - { label: Iniciación, value: iniciacion }
+          - { label: Elemental, value: elemental }
+          - { label: Medio, value: medio }
+          - { label: Avanzado, value: avanzado }
+          - { label: Todos los niveles, value: todos }
+      - { label: Descripción corta, name: shortDesc, widget: text, i18n: true }
+      - { label: Descripción completa, name: body, widget: markdown, i18n: true }
+      - { label: Destacado en inicio, name: featured, widget: boolean, default: false, i18n: duplicate }
+
+  # ── Profesores ───────────────────────────────
+  - name: profesores
+    label: Profesores
+    label_singular: Profesor/a
+    folder: src/content/profesores
+    create: true
+    i18n: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Nombre, name: name, widget: string, i18n: duplicate }
+      - { label: Especialidad, name: specialty, widget: string, i18n: true }
+      - label: Foto
+        name: photo
+        widget: image
+        required: false
+        i18n: duplicate
+      - { label: Biografía, name: bio, widget: markdown, i18n: true }
+      - { label: Orden, name: order, widget: number, default: 99, i18n: duplicate }
+
+  # ── Eventos ──────────────────────────────────
+  - name: eventos
+    label: Eventos
+    label_singular: Evento
+    folder: src/content/eventos
+    create: true
+    i18n: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Título, name: title, widget: string, i18n: true }
+      - { label: Fecha inicio, name: startDate, widget: datetime, i18n: duplicate }
+      - { label: Fecha fin, name: endDate, widget: datetime, required: false, i18n: duplicate }
+      - { label: Lugar, name: location, widget: string, i18n: true }
+      - label: Imagen
+        name: image
+        widget: image
+        required: false
+        i18n: duplicate
+      - { label: Descripción, name: body, widget: markdown, i18n: true }
+      - { label: Enlace de entradas, name: ticketUrl, widget: string, required: false, i18n: duplicate }
+
+  # ── Galería ──────────────────────────────────
+  - name: galeria
+    label: Galería
+    label_singular: Álbum
+    folder: src/content/galeria
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: Título, name: title, widget: string }
+      - { label: Fecha, name: date, widget: datetime }
+      - { label: Descripción, name: description, widget: text, required: false }
+      - label: Fotos
+        name: photos
+        widget: list
+        fields:
+          - { label: Imagen, name: src, widget: image }
+          - { label: Alt / descripción, name: alt, widget: string }
+
+  # ── Configuración del sitio ──────────────────
+  - name: configuracion
+    label: Configuración
+    files:
+      - name: general
+        label: Información general
+        file: src/data/general.json
+        fields:
+          - { label: Nombre de la escuela, name: schoolName, widget: string }
+          - { label: Teléfono, name: phone, widget: string }
+          - { label: Email, name: email, widget: string }
+          - { label: Dirección, name: address, widget: string }
+          - { label: Facebook URL, name: facebook, widget: string, required: false }
+          - { label: Instagram URL, name: instagram, widget: string, required: false }
+          - { label: YouTube URL, name: youtube, widget: string, required: false }

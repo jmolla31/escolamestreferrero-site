@@ -1,0 +1,239 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import CourseCard from '../../components/CourseCard.astro';
+import TeacherCard from '../../components/TeacherCard.astro';
+import EventCard from '../../components/EventCard.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, parseContentPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+import siteConfig from '../../data/general.json';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = lang === 'ca' ? '/ca' : '';
+
+// Cursos destacados en el idioma actual
+const allCourses = await getCollection('cursos');
+const featuredCourses = allCourses
+  .filter(c => {
+    const { lang: cLang } = parseContentPath(c.id);
+    return cLang === lang && c.data.featured;
+  })
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+// Profesores (ordenados)
+const allTeachers = await getCollection('profesores');
+const teachers = allTeachers
+  .filter(p => {
+    const { lang: pLang } = parseContentPath(p.id);
+    return pLang === lang;
+  })
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 4);
+
+// Próximos eventos
+const now = new Date();
+const allEvents = await getCollection('eventos');
+const upcomingEvents = allEvents
+  .filter(e => {
+    const { lang: eLang } = parseContentPath(e.id);
+    return eLang === lang && e.data.startDate >= now;
+  })
+  .sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime())
+  .slice(0, 3);
+
+// Últimas noticias
+const allPosts = await getCollection('blog');
+const latestPosts = allPosts
+  .filter(p => {
+    const { lang: pLang } = parseContentPath(p.id);
+    return pLang === lang && !p.data.draft;
+  })
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 3);
+---
+
+<BaseLayout
+  title={lang === 'ca' ? 'Inici' : 'Inicio'}
+  description={lang === 'ca'
+    ? `Benvingut a ${siteConfig.schoolName}. Descobreix els nostres cursos de música.`
+    : `Bienvenido a ${siteConfig.schoolName}. Descubre nuestros cursos de música.`}
+  {lang}
+>
+  <!-- Hero -->
+  <Hero
+    headline={lang === 'ca'
+      ? `Aprèn música.<br><em>Viu la passió.</em>`
+      : `Aprende música.<br><em>Vive la pasión.</em>`}
+    tagline={lang === 'ca'
+      ? `Formació musical de qualitat per a tots els nivells i edats.`
+      : `Formación musical de calidad para todos los niveles y edades.`}
+    {lang}
+  />
+
+  <!-- Cursos destacados -->
+  {featuredCourses.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <SectionHeader title={t('home.courses.title')} />
+        <div class="cards-grid">
+          {featuredCourses.map(course => {
+            const { slug } = parseContentPath(course.id);
+            return (
+              <CourseCard
+                title={course.data.title}
+                shortDesc={course.data.shortDesc}
+                level={course.data.level}
+                image={course.data.image}
+                {slug}
+                {lang}
+              />
+            );
+          })}
+        </div>
+        <div class="section-cta">
+          <a href={`${base}/cursos/`} class="btn btn--primary">{t('home.courses.more')}</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Profesores -->
+  {teachers.length > 0 && (
+    <section class="section section--alt">
+      <div class="container">
+        <SectionHeader title={t('home.teachers.title')} centered />
+        <div class="teachers-grid">
+          {teachers.map(teacher => {
+            const rendered = teacher.rendered;
+            return (
+              <TeacherCard
+                name={teacher.data.name}
+                specialty={teacher.data.specialty}
+                photo={teacher.data.photo}
+              />
+            );
+          })}
+        </div>
+        <div class="section-cta">
+          <a href={`${base}/${lang === 'ca' ? 'professors' : 'profesores'}/`} class="btn btn--outline">{t('home.teachers.more')}</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Próximos eventos -->
+  {upcomingEvents.length > 0 && (
+    <section class="section">
+      <div class="container">
+        <SectionHeader title={t('home.events.title')} />
+        <div class="events-list">
+          {upcomingEvents.map(event => {
+            const { slug } = parseContentPath(event.id);
+            return (
+              <EventCard
+                title={event.data.title}
+                startDate={event.data.startDate}
+                location={event.data.location}
+                image={event.data.image}
+                ticketUrl={event.data.ticketUrl}
+                {slug}
+                {lang}
+              />
+            );
+          })}
+        </div>
+        <div class="section-cta">
+          <a href={`${base}/${lang === 'ca' ? 'esdeveniments' : 'eventos'}/`} class="btn btn--outline">{t('home.events.more')}</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Últimas noticias -->
+  {latestPosts.length > 0 && (
+    <section class="section section--alt">
+      <div class="container">
+        <SectionHeader title={t('home.blog.title')} />
+        <div class="cards-grid">
+          {latestPosts.map(post => {
+            const { slug } = parseContentPath(post.id);
+            return (
+              <BlogCard
+                title={post.data.title}
+                excerpt={post.data.excerpt}
+                date={post.data.date}
+                heroImage={post.data.heroImage}
+                {slug}
+                {lang}
+              />
+            );
+          })}
+        </div>
+        <div class="section-cta">
+          <a href={`${base}/blog/`} class="btn btn--outline">{t('home.blog.more')}</a>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- CTA de contacto -->
+  <section class="section section--dark contact-cta">
+    <div class="container">
+      <h2>{lang === 'ca' ? '¿Vols saber-ne més?' : '¿Quieres saber más?'}</h2>
+      <p>{lang === 'ca'
+        ? 'Contacta\'ns sense compromís. T\'informarem de tots els cursos i activitats.'
+        : 'Contáctanos sin compromiso. Te informaremos de todos los cursos y actividades.'
+      }</p>
+      <a href={`${base}/${lang === 'ca' ? 'contacte' : 'contacto'}/`} class="btn btn--accent">
+        {t('nav.contact')}
+      </a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .teachers-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(min(180px, 100%), 1fr));
+  }
+
+  .events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .section-cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+
+  .contact-cta .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+  }
+
+  .contact-cta h2 {
+    margin: 0;
+  }
+
+  .contact-cta p {
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 52ch;
+    margin: 0;
+  }
+</style>

@@ -1,0 +1,126 @@
+---
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  shortDesc: string;
+  level: string;
+  image?: string;
+  slug: string;
+  lang: Lang;
+}
+
+const { title, shortDesc, level, image, slug, lang } = Astro.props;
+const t = useTranslations(lang);
+const base = lang === 'ca' ? '/ca' : '';
+
+const levelLabels: Record<string, { es: string; ca: string }> = {
+  iniciacion: { es: 'Iniciación', ca: 'Iniciació' },
+  elemental:  { es: 'Elemental',  ca: 'Elemental' },
+  medio:      { es: 'Medio',      ca: 'Mitjà' },
+  avanzado:   { es: 'Avanzado',   ca: 'Avançat' },
+  todos:      { es: 'Todos los niveles', ca: 'Tots els nivells' },
+};
+
+const levelLabel = levelLabels[level]?.[lang] ?? level;
+---
+
+<article class="course-card">
+  <a href={`${base}/cursos/${slug}/`} class="course-card__image-wrap" tabindex="-1" aria-hidden="true">
+    {image
+      ? <img src={image} alt={title} class="img-cover" loading="lazy" />
+      : <div class="course-card__placeholder" aria-hidden="true"></div>
+    }
+  </a>
+  <div class="course-card__body">
+    <span class="course-card__level">{levelLabel}</span>
+    <h3 class="course-card__title">
+      <a href={`${base}/cursos/${slug}/`}>{title}</a>
+    </h3>
+    <p class="line-clamp-3">{shortDesc}</p>
+    <a href={`${base}/cursos/${slug}/`} class="btn btn--outline course-card__cta">
+      {t('courses.readMore')} →
+    </a>
+  </div>
+</article>
+
+<style>
+  .course-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .course-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+  }
+
+  .course-card__image-wrap {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background-color: var(--color-surface-alt);
+  }
+
+  .course-card__image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+
+  .course-card:hover .course-card__image-wrap img {
+    transform: scale(1.04);
+  }
+
+  .course-card__placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--color-surface-alt) 0%, var(--color-border) 100%);
+  }
+
+  .course-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    flex: 1;
+  }
+
+  .course-card__level {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .course-card__title {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .course-card__title a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .course-card__title a:hover {
+    color: var(--color-brand);
+  }
+
+  .course-card__cta {
+    margin-top: auto;
+    align-self: flex-start;
+    font-size: 0.85rem;
+    padding: 0.45em 1em;
+    color: var(--color-brand);
+    border-color: var(--color-brand);
+  }
+</style>

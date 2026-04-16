@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, parseContentPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts
+    .filter(p => !p.data.draft)
+    .map(post => {
+      const { lang, slug } = parseContentPath(post.id);
+      return { params: { slug }, props: { post, lang } };
+    });
+}
+
+const { post, lang } = Astro.props as { post: any; lang: Lang };
+const t = useTranslations(lang);
+const { Content } = await post.render();
+const base = lang === 'ca' ? '/ca' : '';
+
+const dateStr = post.data.date.toLocaleDateString(lang === 'ca' ? 'ca-ES' : 'es-ES', {
+  day: 'numeric', month: 'long', year: 'numeric',
+});
+---
+
+<BaseLayout title={post.data.title} description={post.data.excerpt} heroImage={post.data.heroImage} {lang}>
+  <article>
+    {post.data.heroImage && (
+      <div class="post-hero">
+        <img src={post.data.heroImage} alt={post.data.title} class="img-cover" />
+      </div>
+    )}
+    <div class="container section">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href={`${base}/`}>{t('nav.home')}</a>
+        <span aria-hidden="true">›</span>
+        <a href={`${base}/blog/`}>{t('nav.blog')}</a>
+        <span aria-hidden="true">›</span>
+        <span aria-current="page">{post.data.title}</span>
+      </nav>
+
+      <header class="post-header">
+        <time class="post-date" datetime={post.data.date.toISOString()}>
+          {t('blog.publishedOn')} {dateStr}
+        </time>
+        <h1>{post.data.title}</h1>
+        <p class="post-excerpt">{post.data.excerpt}</p>
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+
+      <div class="post-back">
+        <a href={`${base}/blog/`} class="btn btn--outline">← {t('blog.title')}</a>
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .post-hero {
+    height: clamp(220px, 35vw, 420px);
+    overflow: hidden;
+  }
+
+  .post-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-brand);
+  }
+
+  .post-date {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .post-header h1 {
+    margin: 0 0 0.75rem;
+  }
+
+  .post-excerpt {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+    margin: 0 0 2.5rem;
+    max-width: 70ch;
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+  }
+
+  .post-back {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+</style>

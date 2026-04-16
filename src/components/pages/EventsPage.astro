@@ -1,0 +1,106 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import EventCard from '../../components/EventCard.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, parseContentPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const now = new Date();
+const allEvents = await getCollection('eventos');
+const filtered = allEvents
+  .filter(e => parseContentPath(e.id).lang === lang)
+  .sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime());
+
+const upcoming = filtered.filter(e => e.data.startDate >= now);
+const past = filtered.filter(e => e.data.startDate < now);
+---
+
+<BaseLayout title={t('events.title')} {lang}>
+  <div class="container section">
+    <SectionHeader title={t('events.title')} />
+
+    {upcoming.length > 0
+      ? (
+        <div class="events-list">
+          {upcoming.map(event => {
+            const { slug } = parseContentPath(event.id);
+            return (
+              <EventCard
+                title={event.data.title}
+                startDate={event.data.startDate}
+                location={event.data.location}
+                image={event.data.image}
+                ticketUrl={event.data.ticketUrl}
+                {slug}
+                {lang}
+              />
+            );
+          })}
+        </div>
+      )
+      : <p class="empty-state">{lang === 'ca' ? 'No hi ha esdeveniments pròxims.' : 'No hay eventos próximos.'}</p>
+    }
+
+    {past.length > 0 && (
+      <section class="past-events">
+        <h2 class="past-events__title">
+          {lang === 'ca' ? 'Esdeveniments passats' : 'Eventos pasados'}
+        </h2>
+        <div class="events-list events-list--muted">
+          {past.slice(0, 6).map(event => {
+            const { slug } = parseContentPath(event.id);
+            return (
+              <EventCard
+                title={event.data.title}
+                startDate={event.data.startDate}
+                location={event.data.location}
+                image={event.data.image}
+                {slug}
+                {lang}
+              />
+            );
+          })}
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .events-list--muted {
+    opacity: 0.65;
+  }
+
+  .past-events {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .past-events__title {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-muted);
+  }
+
+  .empty-state {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    padding: 3rem 0;
+    text-align: center;
+  }
+</style>

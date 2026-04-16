@@ -1,0 +1,18 @@
+---
+import CourseDetailPage from '../../../components/pages/CourseDetailPage.astro';
+import { getCollection } from 'astro:content';
+import { parseContentPath } from '../../../i18n/utils';
+
+export async function getStaticPaths() {
+  const courses = await getCollection('cursos');
+  return courses
+    .filter(c => parseContentPath(c.id).lang === 'ca')
+    .map(course => ({
+      params: { slug: parseContentPath(course.id).slug },
+      props: { course, lang: 'ca' as const },
+    }));
+}
+
+const { course, lang } = Astro.props;
+---
+<CourseDetailPage {course} {lang} />

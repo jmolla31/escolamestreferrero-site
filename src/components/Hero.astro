@@ -1,0 +1,124 @@
+---
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  /** Texto del título principal (puede contener HTML simple) */
+  headline: string;
+  /** Subtítulo / tagline */
+  tagline?: string;
+  /** URL de la imagen de fondo */
+  bgImage?: string;
+  /** Color de fondo de fallback (acepta CSS) */
+  bgColor?: string;
+  lang: Lang;
+  /** Oculta el CTA primario */
+  noCta?: boolean;
+}
+
+const {
+  headline,
+  tagline,
+  bgImage,
+  bgColor = 'var(--color-brand)',
+  lang,
+  noCta = false,
+} = Astro.props;
+
+const t = useTranslations(lang);
+const base = lang === 'ca' ? '/ca' : '';
+---
+
+<section
+  class="hero"
+  style={bgImage ? `--hero-bg: url('${bgImage}')` : `--hero-bg: none; --hero-fallback: ${bgColor}`}
+  aria-label={lang === 'ca' ? 'Capçalera principal' : 'Cabecera principal'}
+>
+  <div class="hero__overlay" aria-hidden="true"></div>
+  <div class="container hero__content">
+    <h1 class="hero__headline" set:html={headline} />
+    {tagline && <p class="hero__tagline">{tagline}</p>}
+    {!noCta && (
+      <div class="hero__actions">
+        <a href={`${base}/cursos/`} class="btn btn--accent hero__cta">
+          {t('hero.cta')}
+        </a>
+        <a href={`${base}/${lang === 'ca' ? 'contacte' : 'contacto'}/`} class="btn btn--outline hero__cta-secondary">
+          {t('nav.contact')}
+        </a>
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: clamp(400px, 60vh, 680px);
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background-color: var(--hero-fallback, var(--color-brand));
+    background-image: var(--hero-bg, none);
+    background-size: cover;
+    background-position: center;
+  }
+
+  .hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to right,
+      rgba(0, 0, 0, 0.55) 0%,
+      rgba(0, 0, 0, 0.2) 60%,
+      transparent 100%
+    );
+  }
+
+  .hero__content {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    padding-block: clamp(3rem, 8vw, 6rem);
+  }
+
+  .hero__headline {
+    font-size: clamp(2rem, 5.5vw, 3.75rem);
+    color: #fff;
+    line-height: 1.1;
+    margin: 0 0 0.75rem;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .hero__tagline {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.85);
+    margin: 0 0 2rem;
+    max-width: 52ch;
+    line-height: 1.5;
+  }
+
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .hero__cta {
+    font-size: 1rem;
+    padding: 0.75em 1.75em;
+  }
+
+  .hero__cta-secondary {
+    font-size: 1rem;
+    padding: 0.75em 1.75em;
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .hero__cta-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: #fff;
+    color: #fff;
+  }
+</style>

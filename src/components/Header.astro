@@ -1,0 +1,271 @@
+---
+import { useTranslations, getAlternateLangUrl } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+import siteConfig from '../data/general.json';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const alternateLangUrl = getAlternateLangUrl(Astro.url);
+const base = lang === 'ca' ? '/ca' : '';
+
+const navLinks = [
+  { key: 'nav.home' as const, href: `${base}/` },
+  { key: 'nav.about' as const, href: `${base}/${lang === 'ca' ? 'sobre-nosaltres' : 'sobre-nosotros'}/` },
+  { key: 'nav.courses' as const, href: `${base}/cursos/` },
+  { key: 'nav.teachers' as const, href: `${base}/${lang === 'ca' ? 'professors' : 'profesores'}/` },
+  { key: 'nav.events' as const, href: `${base}/${lang === 'ca' ? 'esdeveniments' : 'eventos'}/` },
+  { key: 'nav.blog' as const, href: `${base}/blog/` },
+  { key: 'nav.gallery' as const, href: `${base}/${lang === 'ca' ? 'galeria' : 'galeria'}/` },
+  { key: 'nav.contact' as const, href: `${base}/${lang === 'ca' ? 'contacte' : 'contacto'}/` },
+];
+---
+
+<header class="site-header" role="banner">
+  <div class="container header-inner">
+    <!-- Logo / Nombre -->
+    <a href={`${base}/`} class="site-logo" aria-label={siteConfig.schoolName}>
+      <!-- Reemplaza con tu logo SVG o imagen -->
+      <span class="site-logo__text">{siteConfig.schoolName}</span>
+    </a>
+
+    <!-- Navegación principal (desktop) -->
+    <nav class="main-nav" aria-label={lang === 'ca' ? 'Navegació principal' : 'Navegación principal'}>
+      <ul role="list">
+        {navLinks.map(({ key, href }) => (
+          <li>
+            <a
+              href={href}
+              class:list={['main-nav__link', { 'is-active': Astro.url.pathname === href || Astro.url.pathname === href.slice(0, -1) }]}
+            >
+              {t(key)}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <div class="header-actions">
+      <!-- Selector de idioma -->
+      <a href={alternateLangUrl} class="lang-switch" hreflang={lang === 'ca' ? 'es' : 'ca'}>
+        {t('lang.switch')}
+      </a>
+
+      <!-- Menú hamburguesa (móvil) -->
+      <button
+        class="menu-toggle"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        aria-label={lang === 'ca' ? 'Obrir menú' : 'Abrir menú'}
+        id="menu-toggle-btn"
+      >
+        <span class="hamburger" aria-hidden="true"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Menú móvil -->
+  <nav
+    class="mobile-nav"
+    id="mobile-menu"
+    aria-label={lang === 'ca' ? 'Menú mòbil' : 'Menú móvil'}
+    hidden
+  >
+    <ul role="list">
+      {navLinks.map(({ key, href }) => (
+        <li>
+          <a href={href} class="mobile-nav__link">
+            {t(key)}
+          </a>
+        </li>
+      ))}
+      <li>
+        <a href={alternateLangUrl} class="mobile-nav__link mobile-nav__lang">
+          {t('lang.switch')}
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle-btn');
+  const menu = document.getElementById('mobile-menu');
+
+  toggle?.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    menu?.toggleAttribute('hidden');
+  });
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    height: 4rem;
+  }
+
+  .site-logo {
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .site-logo__text {
+    font-family: 'DisplayFont', Georgia, serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-brand);
+    letter-spacing: -0.01em;
+  }
+
+  .main-nav {
+    display: none;
+  }
+
+  @media (min-width: 900px) {
+    .main-nav {
+      display: block;
+    }
+
+    .menu-toggle {
+      display: none;
+    }
+  }
+
+  .main-nav ul {
+    display: flex;
+    gap: 0.25rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .main-nav__link {
+    display: block;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    border-radius: 0.25rem;
+    transition: color 0.15s, background-color 0.15s;
+  }
+
+  .main-nav__link:hover,
+  .main-nav__link.is-active {
+    color: var(--color-brand);
+    background-color: color-mix(in srgb, var(--color-brand) 8%, transparent);
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .lang-switch {
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.3rem 0.7rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: 99px;
+    text-decoration: none;
+    color: var(--color-text);
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .lang-switch:hover {
+    border-color: var(--color-brand);
+    color: var(--color-brand);
+  }
+
+  /* Hamburguesa */
+  .menu-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .hamburger,
+  .hamburger::before,
+  .hamburger::after {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background-color: var(--color-text);
+    transition: transform 0.25s;
+  }
+
+  .hamburger {
+    position: relative;
+  }
+
+  .hamburger::before,
+  .hamburger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .hamburger::before { top: -6px; }
+  .hamburger::after  { top: 6px; }
+
+  /* Menú móvil */
+  .mobile-nav {
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .mobile-nav[hidden] {
+    display: none;
+  }
+
+  .mobile-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0;
+  }
+
+  .mobile-nav__link {
+    display: block;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+
+  .mobile-nav__link:hover {
+    color: var(--color-brand);
+  }
+
+  .mobile-nav__lang {
+    border-top: 1px solid var(--color-border);
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+  }
+</style>

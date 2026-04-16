@@ -1,0 +1,55 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import BlogCard from '../../components/BlogCard.astro';
+import { getCollection } from 'astro:content';
+import { useTranslations, parseContentPath } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const allPosts = await getCollection('blog');
+const posts = allPosts
+  .filter(p => parseContentPath(p.id).lang === lang && !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+---
+
+<BaseLayout title={t('blog.title')} {lang}>
+  <div class="container section">
+    <SectionHeader title={t('blog.title')} />
+    {posts.length > 0
+      ? (
+        <div class="cards-grid">
+          {posts.map(post => {
+            const { slug } = parseContentPath(post.id);
+            return (
+              <BlogCard
+                title={post.data.title}
+                excerpt={post.data.excerpt}
+                date={post.data.date}
+                heroImage={post.data.heroImage}
+                {slug}
+                {lang}
+              />
+            );
+          })}
+        </div>
+      )
+      : <p class="empty-state">{lang === 'ca' ? 'Aviat hi haurà notícies.' : 'Próximamente habrá noticias.'}</p>
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .empty-state {
+    color: var(--color-text-muted);
+    font-size: 1.1rem;
+    padding: 3rem 0;
+    text-align: center;
+  }
+</style>

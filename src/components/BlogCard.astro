@@ -1,0 +1,125 @@
+---
+import { useTranslations } from '../i18n/utils';
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  excerpt: string;
+  date: Date;
+  heroImage?: string;
+  slug: string;
+  lang: Lang;
+}
+
+const { title, excerpt, date, heroImage, slug, lang } = Astro.props;
+const t = useTranslations(lang);
+const base = lang === 'ca' ? '/ca' : '';
+
+const dateStr = date.toLocaleDateString(lang === 'ca' ? 'ca-ES' : 'es-ES', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
+---
+
+<article class="blog-card">
+  {heroImage && (
+    <a href={`${base}/blog/${slug}/`} class="blog-card__image-wrap" tabindex="-1" aria-hidden="true">
+      <img src={heroImage} alt={title} class="img-cover" loading="lazy" />
+    </a>
+  )}
+  <div class="blog-card__body">
+    <time class="blog-card__date" datetime={date.toISOString()}>
+      {t('blog.publishedOn')} {dateStr}
+    </time>
+    <h3 class="blog-card__title">
+      <a href={`${base}/blog/${slug}/`}>{title}</a>
+    </h3>
+    <p class="line-clamp-3 blog-card__excerpt">{excerpt}</p>
+    <a href={`${base}/blog/${slug}/`} class="blog-card__cta">
+      {t('blog.readMore')} →
+    </a>
+  </div>
+</article>
+
+<style>
+  .blog-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--color-surface);
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+
+  .blog-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+  }
+
+  .blog-card__image-wrap {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+  }
+
+  .blog-card__image-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+  }
+
+  .blog-card:hover .blog-card__image-wrap img {
+    transform: scale(1.04);
+  }
+
+  .blog-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    flex: 1;
+  }
+
+  .blog-card__date {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .blog-card__title {
+    font-size: 1.05rem;
+    margin: 0;
+  }
+
+  .blog-card__title a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .blog-card__title a:hover {
+    color: var(--color-brand);
+  }
+
+  .blog-card__excerpt {
+    font-size: 0.9rem;
+    color: var(--color-text-muted);
+    margin: 0;
+    flex: 1;
+  }
+
+  .blog-card__cta {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-brand);
+    text-decoration: none;
+    align-self: flex-start;
+    margin-top: auto;
+  }
+
+  .blog-card__cta:hover {
+    text-decoration: underline;
+  }
+</style>
