@@ -11,7 +11,7 @@ backend:
   repo: jmolla31/escolamestreferrero-site
   branch: main
   # URL del proxy OAuth (Cloudflare Worker). Ver docs/decap-oauth-setup.md
-  base_url: https://oauth.escolamestreferro.com
+  base_url: https://oauth.escolamestreferrero.com
 
 # Carpeta donde se guardan los archivos subidos desde el CMS
 media_folder: public/uploads
