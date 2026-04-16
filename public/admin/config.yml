@@ -13,6 +13,9 @@ backend:
   # URL del proxy OAuth (Cloudflare Worker). Ver docs/decap-oauth-setup.md
   base_url: https://oauth.escolamestreferrero.com
 
+# Idioma de la interfaz del CMS
+locale: es
+
 # Carpeta donde se guardan los archivos subidos desde el CMS
 media_folder: public/uploads
 public_folder: /uploads
