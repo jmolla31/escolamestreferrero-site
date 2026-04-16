@@ -28,7 +28,7 @@ const levelLabels: Record<string, { es: string; ca: string }> = {
 };
 
 const levelLabel = levelLabels[course.data.level]?.[lang] ?? course.data.level;
-const base = lang === 'ca' ? '/ca' : '';
+const base = lang === 'es' ? '/es' : '';
 ---
 
 <BaseLayout title={course.data.title} heroImage={course.data.image} {lang}>

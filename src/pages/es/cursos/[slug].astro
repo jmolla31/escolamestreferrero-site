@@ -6,10 +6,10 @@ import { parseContentPath } from '../../../i18n/utils';
 export async function getStaticPaths() {
   const courses = await getCollection('cursos');
   return courses
-    .filter(c => parseContentPath(c.id).lang === 'ca')
+    .filter(c => parseContentPath(c.id).lang === 'es')
     .map(course => ({
       params: { slug: parseContentPath(course.id).slug },
-      props: { course, lang: 'ca' as const },
+      props: { course, lang: 'es' as const },
     }));
 }
 

@@ -16,8 +16,8 @@ export function useTranslations(lang: Lang) {
  */
 export function getLangFromUrl(url: URL): Lang {
   const [, maybeLocale] = url.pathname.split('/');
-  if (maybeLocale === 'ca') return 'ca';
-  return 'es';
+  if (maybeLocale === 'es') return 'es';
+  return 'ca';
 }
 
 /**
@@ -25,12 +25,12 @@ export function getLangFromUrl(url: URL): Lang {
  */
 export function getAlternateLangUrl(url: URL): string {
   const lang = getLangFromUrl(url);
-  if (lang === 'ca') {
-    // Quitar el prefijo /ca
-    return url.pathname.replace(/^\/ca/, '') || '/';
+  if (lang === 'es') {
+    // Quitar el prefijo /es
+    return url.pathname.replace(/^\/es/, '') || '/';
   } else {
-    // Añadir el prefijo /ca
-    return `/ca${url.pathname}`;
+    // Añadir el prefijo /es
+    return `/es${url.pathname}`;
   }
 }
 

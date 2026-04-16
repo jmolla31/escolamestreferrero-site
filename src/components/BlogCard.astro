@@ -13,7 +13,7 @@ interface Props {
 
 const { title, excerpt, date, heroImage, slug, lang } = Astro.props;
 const t = useTranslations(lang);
-const base = lang === 'ca' ? '/ca' : '';
+const base = lang === 'es' ? '/es' : '';
 
 const dateStr = date.toLocaleDateString(lang === 'ca' ? 'ca-ES' : 'es-ES', {
   day: 'numeric',

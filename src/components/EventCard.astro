@@ -14,7 +14,7 @@ interface Props {
 
 const { title, startDate, location, image, ticketUrl, slug, lang } = Astro.props;
 const t = useTranslations(lang);
-const base = lang === 'ca' ? '/ca' : '';
+const base = lang === 'es' ? '/es' : '';
 const eventBase = lang === 'ca' ? 'esdeveniments' : 'eventos';
 
 const dateStr = startDate.toLocaleDateString(lang === 'ca' ? 'ca-ES' : 'es-ES', {

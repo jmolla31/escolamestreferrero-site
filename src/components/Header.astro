@@ -10,7 +10,7 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const alternateLangUrl = getAlternateLangUrl(Astro.url);
-const base = lang === 'ca' ? '/ca' : '';
+const base = lang === 'es' ? '/es' : '';
 
 const navLinks = [
   { key: 'nav.home' as const, href: `${base}/` },

@@ -70,8 +70,8 @@ export const ui = {
     'footer.privacy': 'Política de privacidad',
 
     // Misc
-    'lang.switch': 'Català',
-    'lang.switch.url': '/ca',
+    'lang.switch': 'Valencià',
+    'lang.switch.url': '/',
   },
   ca: {
     // Navegació
@@ -139,7 +139,7 @@ export const ui = {
 
     // Misc
     'lang.switch': 'Español',
-    'lang.switch.url': '/',
+    'lang.switch.url': '/es',
   },
 } as const;
 

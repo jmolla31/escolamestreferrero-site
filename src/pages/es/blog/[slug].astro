@@ -6,10 +6,10 @@ import { parseContentPath } from '../../../i18n/utils';
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts
-    .filter(p => parseContentPath(p.id).lang === 'ca' && !p.data.draft)
+    .filter(p => parseContentPath(p.id).lang === 'es' && !p.data.draft)
     .map(post => ({
       params: { slug: parseContentPath(post.id).slug },
-      props: { post, lang: 'ca' as const },
+      props: { post, lang: 'es' as const },
     }));
 }
 

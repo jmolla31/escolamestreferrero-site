@@ -13,7 +13,7 @@ interface Props {
 
 const { title, shortDesc, level, image, slug, lang } = Astro.props;
 const t = useTranslations(lang);
-const base = lang === 'ca' ? '/ca' : '';
+const base = lang === 'es' ? '/es' : '';
 
 const levelLabels: Record<string, { es: string; ca: string }> = {
   iniciacion: { es: 'Iniciación', ca: 'Iniciació' },
