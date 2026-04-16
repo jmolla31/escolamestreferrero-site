@@ -8,10 +8,10 @@
 backend:
   name: github
   # Actualiza con tu usuario/organización y nombre de repositorio
-  repo: TU_USUARIO/escola-musica
+  repo: jmolla31/escolamestreferrero-site
   branch: main
   # URL del proxy OAuth (Cloudflare Worker). Ver docs/decap-oauth-setup.md
-  base_url: https://TU_OAUTH_PROXY.workers.dev
+  base_url: https://escolams-oauth.workers.dev
 
 # Carpeta donde se guardan los archivos subidos desde el CMS
 media_folder: public/uploads
@@ -22,8 +22,8 @@ public_folder: /uploads
 # ──────────────────────────────────────────────
 i18n:
   structure: multiple_folders
-  locales: [es, ca]
-  default_locale: es
+  locales: [ca, es]
+  default_locale: ca
 
 # ──────────────────────────────────────────────
 # Colecciones

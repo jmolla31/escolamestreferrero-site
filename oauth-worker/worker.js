@@ -11,7 +11,7 @@
 
 const ALLOWED_ORIGINS = [
   // Actualiza con el dominio real de tu sitio
-  'https://escola-musica.pages.dev',
+  'https://escolamestreferrero.com',
 ];
 
 const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
