@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import CalendarStrip from '../../components/CalendarStrip.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import TeacherCard from '../../components/TeacherCard.astro';
 import EventCard from '../../components/EventCard.astro';
@@ -112,7 +113,6 @@ const homeCards = [
         <SectionHeader title={t('home.teachers.title')} centered />
         <div class="teachers-strip">
           {teachers.map(teacher => {
-            const rendered = teacher.rendered;
             return (
               <TeacherCard
                 name={teacher.data.name}
@@ -122,6 +122,7 @@ const homeCards = [
             );
           })}
         </div>
+        <CalendarStrip {lang} />
         <div class="section-cta">
           <a href={`${base}/${lang === 'ca' ? 'professors' : 'profesores'}/`} class="btn btn--outline">{t('home.teachers.more')}</a>
         </div>

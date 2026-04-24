@@ -1,0 +1,51 @@
+{
+    "range": {
+        "start": {
+            "year": 2026,
+            "month": 4
+        },
+        "end": {
+            "year": 2026,
+            "month": 12
+        }
+    },
+    "entries": [
+        {
+            "date": "2026-04-25",
+            "color": "#c6b300",
+            "label": {
+                "ca": "Assaig general",
+                "es": "Ensayo general"
+            },
+            "description": {
+                "ca": "Preparació conjunta per a l'actuació de final de mes.",
+                "es": "Preparación conjunta para la actuación de final de mes."
+            }
+        },
+        {
+            "startDate": "2026-05-12",
+            "endDate": "2026-05-16",
+            "color": "#1f7a8c",
+            "label": {
+                "ca": "Aules Obertes",
+                "es": "Aulas Abiertas"
+            },
+            "description": {
+                "ca": "Jornada de portes obertes amb activitats i demostracions.",
+                "es": "Jornada de puertas abiertas con actividades y demostraciones."
+            }
+        },
+        {
+            "date": "2026-05-07",
+            "color": "#8f2d56",
+            "label": {
+                "ca": "Concert didàctic",
+                "es": "Concierto didáctico"
+            },
+            "description": {
+                "ca": "Sessió especial per a alumnat i famílies.",
+                "es": "Sesión especial para alumnado y familias."
+            }
+        }
+    ]
+}

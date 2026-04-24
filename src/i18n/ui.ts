@@ -57,6 +57,9 @@ export const ui = {
     // Banda Jove
     'bandajove.title': 'Banda Joven',
 
+    // Calendario
+    'calendar.title': 'Calendario destacado',
+
     // Contacto
     'contact.title': 'Contacto',
     'contact.phone': 'Teléfono',
@@ -127,6 +130,9 @@ export const ui = {
 
     // Banda Jove
     'bandajove.title': 'Banda Jove',
+
+    // Calendari
+    'calendar.title': 'Calendari destacat',
 
     // Contacte
     'contact.title': 'Contacte',

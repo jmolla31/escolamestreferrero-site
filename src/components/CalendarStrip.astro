@@ -1,0 +1,547 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+import calendarHighlights from '../data/calendar-highlights.json';
+
+interface Props {
+  lang: Lang;
+}
+
+interface CalendarHighlightEntryInput {
+  date?: string;
+  startDate?: string;
+  endDate?: string;
+  color: string;
+  label: Record<Lang, string>;
+  description: Record<Lang, string>;
+}
+
+interface LocalizedEntry {
+  dayKey: string;
+  startDate: string;
+  endDate: string;
+  color: string;
+  label: string;
+  description: string;
+}
+
+interface MonthCell {
+  key: string;
+  dayNumber?: number;
+  entry?: LocalizedEntry;
+  isPlaceholder: boolean;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const locale = lang === 'ca' ? 'ca-ES' : 'es-ES';
+const emptyDetailsMessage = lang === 'ca'
+  ? 'Selecciona un dia ressaltat per veure la informació.'
+  : 'Selecciona un día resaltado para ver la información.';
+
+const parseIsoDate = (value: string) => {
+  const [year, month, day] = value.split('-').map(Number);
+  return new Date(year, month - 1, day);
+};
+
+const toIsoDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const rawStartMonth = new Date(calendarHighlights.range.start.year, calendarHighlights.range.start.month - 1, 1);
+const rawEndMonth = new Date(calendarHighlights.range.end.year, calendarHighlights.range.end.month - 1, 1);
+const [startMonth, endMonth] = rawStartMonth <= rawEndMonth
+  ? [rawStartMonth, rawEndMonth]
+  : [rawEndMonth, rawStartMonth];
+
+const calendarEntries = calendarHighlights.entries as CalendarHighlightEntryInput[];
+
+const localizedEntries: LocalizedEntry[] = calendarEntries.flatMap((entry) => {
+  const rawStartDate = entry.startDate ?? entry.date;
+  const rawEndDate = entry.endDate ?? entry.date;
+  if (!rawStartDate || !rawEndDate) {
+    return [];
+  }
+
+  const parsedStart = parseIsoDate(rawStartDate);
+  const parsedEnd = parseIsoDate(rawEndDate);
+  const [rangeStart, rangeEnd] = parsedStart <= parsedEnd
+    ? [parsedStart, parsedEnd]
+    : [parsedEnd, parsedStart];
+  const normalizedStartDate = toIsoDate(rangeStart);
+  const normalizedEndDate = toIsoDate(rangeEnd);
+  const expandedEntries: LocalizedEntry[] = [];
+
+  for (
+    let cursor = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), rangeStart.getDate());
+    cursor <= rangeEnd;
+    cursor = new Date(cursor.getFullYear(), cursor.getMonth(), cursor.getDate() + 1)
+  ) {
+    expandedEntries.push({
+      dayKey: toIsoDate(cursor),
+      startDate: normalizedStartDate,
+      endDate: normalizedEndDate,
+      color: entry.color,
+      label: entry.label[lang],
+      description: entry.description[lang],
+    });
+  }
+
+  return expandedEntries;
+});
+
+const entriesByDate = new Map(localizedEntries.map((entry) => [entry.dayKey, entry]));
+const monthFormatter = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
+const weekdayFormatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+const weekdayLabels = Array.from({ length: 7 }, (_, index) => {
+  const weekdayDate = new Date(2024, 0, index + 1);
+  return weekdayFormatter.format(weekdayDate).replace('.', '').slice(0, 2).toUpperCase();
+});
+
+const months = [];
+let initialEntry: LocalizedEntry | null = null;
+
+for (
+  let cursor = new Date(startMonth.getFullYear(), startMonth.getMonth(), 1);
+  cursor <= endMonth;
+  cursor = new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)
+) {
+  const year = cursor.getFullYear();
+  const monthIndex = cursor.getMonth();
+  const firstWeekday = (new Date(year, monthIndex, 1).getDay() + 6) % 7;
+  const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
+  const cells: MonthCell[] = [];
+
+  for (let offset = 0; offset < firstWeekday; offset += 1) {
+    cells.push({
+      key: `${year}-${monthIndex + 1}-placeholder-${offset}`,
+      isPlaceholder: true,
+    });
+  }
+
+  for (let day = 1; day <= daysInMonth; day += 1) {
+    const isoDate = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const entry = entriesByDate.get(isoDate);
+    if (!initialEntry && entry) {
+      initialEntry = entry;
+    }
+
+    cells.push({
+      key: isoDate,
+      dayNumber: day,
+      entry,
+      isPlaceholder: false,
+    });
+  }
+
+  months.push({
+    key: `${year}-${monthIndex + 1}`,
+    title: monthFormatter.format(cursor),
+    cells,
+  });
+}
+
+const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.format(endMonth)}`;
+---
+
+<section
+  class="calendar-strip"
+  data-calendar-strip
+  data-empty-details={emptyDetailsMessage}
+  aria-label={lang === 'ca' ? 'Calendari d\'activitats' : 'Calendario de actividades'}
+>
+  <div class="calendar-strip__head">
+    <div>
+      <p class="calendar-strip__eyebrow">{lang === 'ca' ? 'Agenda visual' : 'Agenda visual'}</p>
+      <h3 class="calendar-strip__title">{t('calendar.title')}</h3>
+    </div>
+    <p class="calendar-strip__range">{rangeLabel}</p>
+  </div>
+
+  <div class="calendar-strip__viewport">
+    <button
+      type="button"
+      class="calendar-strip__nav"
+      data-calendar-prev
+      aria-label={lang === 'ca' ? 'Veure el mes anterior' : 'Ver el mes anterior'}
+    >
+      <span aria-hidden="true">&#8249;</span>
+    </button>
+
+    <div class="calendar-strip__months" data-calendar-months role="list">
+      {months.map((month) => (
+        <article class="calendar-strip__month-card" role="listitem">
+          <h4 class="calendar-strip__month-title">{month.title}</h4>
+          <div class="calendar-strip__weekdays" aria-hidden="true">
+            {weekdayLabels.map((weekday) => (
+              <span class="calendar-strip__weekday-head">{weekday}</span>
+            ))}
+          </div>
+          <div class="calendar-strip__month-grid">
+            {month.cells.map((cell) => {
+              if (cell.isPlaceholder) {
+                return <span class="calendar-strip__day calendar-strip__day--empty" aria-hidden="true"></span>;
+              }
+
+              if (cell.entry) {
+                return (
+                  <button
+                    type="button"
+                    class:list={['calendar-strip__day', 'is-highlighted', { 'is-selected': initialEntry?.dayKey === cell.entry.dayKey }]}
+                    style={`--calendar-accent:${cell.entry.color}`}
+                    data-calendar-entry
+                    data-calendar-label={cell.entry.label}
+                    data-calendar-description={cell.entry.description}
+                    data-calendar-color={cell.entry.color}
+                    title={cell.entry.label}
+                  >
+                    <span class="calendar-strip__number">{cell.dayNumber}</span>
+                    <span class="calendar-strip__dot"></span>
+                  </button>
+                );
+              }
+
+              return (
+                <span class="calendar-strip__day">
+                  <span class="calendar-strip__number">{cell.dayNumber}</span>
+                </span>
+              );
+            })}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <button
+      type="button"
+      class="calendar-strip__nav"
+      data-calendar-next
+      aria-label={lang === 'ca' ? 'Veure el mes següent' : 'Ver el mes siguiente'}
+    >
+      <span aria-hidden="true">&#8250;</span>
+    </button>
+  </div>
+
+  <div class="calendar-strip__details" data-calendar-details>
+    {initialEntry ? (
+      <div class="calendar-strip__details-card" style={`--calendar-accent:${initialEntry.color}`}>
+        <p class="calendar-strip__details-label">{initialEntry.label}</p>
+        <p class="calendar-strip__details-text">{initialEntry.description}</p>
+      </div>
+    ) : (
+      <p class="calendar-strip__details-empty">{emptyDetailsMessage}</p>
+    )}
+  </div>
+</section>
+
+<script is:inline>
+  (() => {
+    const root = document.currentScript?.previousElementSibling;
+    if (!(root instanceof HTMLElement)) return;
+
+    const monthsEl = root.querySelector('[data-calendar-months]');
+    const prevButton = root.querySelector('[data-calendar-prev]');
+    const nextButton = root.querySelector('[data-calendar-next]');
+    const detailsEl = root.querySelector('[data-calendar-details]');
+    const entryButtons = Array.from(root.querySelectorAll('[data-calendar-entry]'));
+
+    const updateNavState = () => {
+      if (!(monthsEl instanceof HTMLElement) || !(prevButton instanceof HTMLButtonElement) || !(nextButton instanceof HTMLButtonElement)) {
+        return;
+      }
+
+      const hasOverflow = monthsEl.scrollWidth > monthsEl.clientWidth + 1;
+      const maxScrollLeft = monthsEl.scrollWidth - monthsEl.clientWidth - 1;
+
+      prevButton.disabled = !hasOverflow || monthsEl.scrollLeft <= 1;
+      nextButton.disabled = !hasOverflow || monthsEl.scrollLeft >= maxScrollLeft;
+    };
+
+    const scrollByMonth = (direction) => {
+      if (!(monthsEl instanceof HTMLElement)) return;
+
+      const firstMonth = monthsEl.querySelector('.calendar-strip__month-card');
+      if (!(firstMonth instanceof HTMLElement)) return;
+
+      const styles = getComputedStyle(monthsEl);
+      const gap = Number.parseFloat(styles.columnGap || styles.gap || '0');
+      const amount = firstMonth.getBoundingClientRect().width + gap;
+
+      monthsEl.scrollBy({
+        left: direction * amount,
+        behavior: 'smooth',
+      });
+    };
+
+    if (monthsEl instanceof HTMLElement && prevButton instanceof HTMLButtonElement && nextButton instanceof HTMLButtonElement) {
+      prevButton.addEventListener('click', () => scrollByMonth(-1));
+      nextButton.addEventListener('click', () => scrollByMonth(1));
+      monthsEl.addEventListener('scroll', updateNavState, { passive: true });
+      new ResizeObserver(updateNavState).observe(monthsEl);
+      requestAnimationFrame(updateNavState);
+    }
+
+    if (!(detailsEl instanceof HTMLElement) || !entryButtons.length) return;
+
+    const renderDetails = (button) => {
+      const card = document.createElement('div');
+      card.className = 'calendar-strip__details-card';
+      card.style.setProperty('--calendar-accent', button.dataset.calendarColor || '#c6b300');
+
+      const label = document.createElement('p');
+      label.className = 'calendar-strip__details-label';
+      label.textContent = button.dataset.calendarLabel || '';
+
+      const text = document.createElement('p');
+      text.className = 'calendar-strip__details-text';
+      text.textContent = button.dataset.calendarDescription || '';
+
+      card.append(label, text);
+      detailsEl.replaceChildren(card);
+    };
+
+    entryButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        entryButtons.forEach((entryButton) => entryButton.classList.remove('is-selected'));
+        button.classList.add('is-selected');
+        renderDetails(button);
+      });
+    });
+  })();
+</script>
+
+<style>
+  .calendar-strip {
+    --calendar-month-gap: 1rem;
+    --calendar-visible-months: 3;
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    border-radius: 1.25rem;
+    background: linear-gradient(135deg, rgba(14, 18, 53, 0.06), rgba(198, 179, 0, 0.08));
+    border: 1px solid rgba(14, 18, 53, 0.1);
+  }
+
+  .calendar-strip__head {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .calendar-strip__eyebrow {
+    margin: 0 0 0.25rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .calendar-strip__title,
+  .calendar-strip__range {
+    margin: 0;
+  }
+
+  .calendar-strip__title {
+    font-size: 1.35rem;
+  }
+
+  .calendar-strip__range {
+    font-size: 0.92rem;
+    color: var(--color-text-muted);
+  }
+
+  .calendar-strip__viewport {
+    position: relative;
+  }
+
+  .calendar-strip__nav {
+    width: 2.75rem;
+    height: 2.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 2;
+    border: 1px solid rgba(14, 18, 53, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--color-brand);
+    font: inherit;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  }
+
+  .calendar-strip__nav[data-calendar-prev] {
+    inset-inline-start: -1.375rem;
+  }
+
+  .calendar-strip__nav[data-calendar-next] {
+    inset-inline-end: -1.375rem;
+  }
+
+  .calendar-strip__nav:hover:not(:disabled) {
+    background: var(--color-brand);
+    color: #fff;
+  }
+
+  .calendar-strip__nav:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  .calendar-strip__months {
+    display: flex;
+    gap: var(--calendar-month-gap);
+    overflow-x: auto;
+    padding-bottom: 0.75rem;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .calendar-strip__months::-webkit-scrollbar {
+    display: none;
+  }
+
+  .calendar-strip__month-card {
+    flex: 0 0 calc((100% - (var(--calendar-visible-months) - 1) * var(--calendar-month-gap)) / var(--calendar-visible-months));
+    min-width: 0;
+    padding: 1rem;
+    border-radius: 1rem;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(14, 18, 53, 0.08);
+    scroll-snap-align: start;
+  }
+
+  .calendar-strip__month-title {
+    margin: 0 0 0.85rem;
+    font-size: 1rem;
+    text-transform: capitalize;
+  }
+
+  .calendar-strip__weekdays,
+  .calendar-strip__month-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.35rem;
+  }
+
+  .calendar-strip__weekdays {
+    margin-bottom: 0.35rem;
+  }
+
+  .calendar-strip__weekday-head {
+    font-size: 0.7rem;
+    text-align: center;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .calendar-strip__day {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    min-height: 2.8rem;
+    padding: 0.35rem 0.2rem;
+    border: 1px solid rgba(14, 18, 53, 0.12);
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.72);
+    color: var(--color-text);
+    text-align: center;
+  }
+
+  .calendar-strip__day.is-highlighted {
+    border-color: color-mix(in srgb, var(--calendar-accent) 55%, white);
+    background: color-mix(in srgb, var(--calendar-accent) 10%, white);
+    cursor: pointer;
+  }
+
+  .calendar-strip__day.is-selected {
+    outline: 2px solid var(--calendar-accent);
+    outline-offset: 1px;
+  }
+
+  .calendar-strip__day--empty {
+    border: none;
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .calendar-strip__number {
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .calendar-strip__dot {
+    width: 0.42rem;
+    height: 0.42rem;
+    border-radius: 50%;
+    background: var(--calendar-accent, transparent);
+  }
+
+  .calendar-strip__details {
+    margin-top: 1rem;
+    min-height: 4.75rem;
+  }
+
+  .calendar-strip__details-card {
+    padding: 1rem 1.1rem;
+    border-radius: 1rem;
+    background: color-mix(in srgb, var(--calendar-accent) 12%, white);
+    border-inline-start: 4px solid var(--calendar-accent);
+  }
+
+  .calendar-strip__details-label,
+  .calendar-strip__details-text,
+  .calendar-strip__details-empty {
+    margin: 0;
+  }
+
+  .calendar-strip__details-label {
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+
+  .calendar-strip__details-empty {
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 720px) {
+    .calendar-strip {
+      --calendar-visible-months: 1;
+    }
+
+    .calendar-strip__head {
+      align-items: start;
+      flex-direction: column;
+    }
+
+    .calendar-strip__nav {
+      width: 2.25rem;
+      height: 2.25rem;
+      font-size: 1.25rem;
+    }
+
+    .calendar-strip__nav[data-calendar-prev] {
+      inset-inline-start: -1.125rem;
+    }
+
+    .calendar-strip__nav[data-calendar-next] {
+      inset-inline-end: -1.125rem;
+    }
+  }
+
+  @media (min-width: 721px) and (max-width: 1100px) {
+    .calendar-strip {
+      --calendar-visible-months: 2;
+    }
+  }
+</style>
