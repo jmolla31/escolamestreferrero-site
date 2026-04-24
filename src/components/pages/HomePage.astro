@@ -129,7 +129,9 @@ const homeCards = [
     </section>
   )}
 
-  <CalendarStrip {lang} />
+  <div class="container">
+    <CalendarStrip {lang} />
+  </div>
 
   <!-- Próximos eventos -->
   {upcomingEvents.length > 0 && (
