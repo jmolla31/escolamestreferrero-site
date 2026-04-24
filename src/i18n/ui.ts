@@ -9,7 +9,7 @@ export const ui = {
     // Navegación
     'nav.home': 'Inicio',
     'nav.about': 'Sobre nosotros',
-    'nav.courses': 'Cursos',
+    'nav.courses': 'Oferta Educativa',
     'nav.teachers': 'Profesores',
     'nav.blog': 'Noticias',
     'nav.events': 'Eventos',
@@ -77,7 +77,7 @@ export const ui = {
     // Navegació
     'nav.home': 'Inici',
     'nav.about': 'Sobre nosaltres',
-    'nav.courses': 'Cursos',
+    'nav.courses': 'Oferta Educativa',
     'nav.teachers': 'Professors',
     'nav.blog': 'Notícies',
     'nav.events': 'Esdeveniments',

@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
-import CourseCard from '../../components/CourseCard.astro';
 import TeacherCard from '../../components/TeacherCard.astro';
 import EventCard from '../../components/EventCard.astro';
 import BlogCard from '../../components/BlogCard.astro';
@@ -17,16 +16,6 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const base = lang === 'es' ? '/es' : '';
-
-// Cursos destacados en el idioma actual
-const allCourses = await getCollection('cursos');
-const featuredCourses = allCourses
-  .filter(c => {
-    const { lang: cLang } = parseContentPath(c.id);
-    return cLang === lang && c.data.featured;
-  })
-  .sort((a, b) => a.data.order - b.data.order)
-  .slice(0, 3);
 
 // Profesores (ordenados)
 const allTeachers = await getCollection('profesores');
@@ -115,33 +104,6 @@ const homeCards = [
       ))}
     </div>
   </section>
-
-  <!-- Cursos destacados -->
-  {featuredCourses.length > 0 && (
-    <section class="section">
-      <div class="container">
-        <SectionHeader title={t('home.courses.title')} />
-        <div class="cards-grid">
-          {featuredCourses.map(course => {
-            const { slug } = parseContentPath(course.id);
-            return (
-              <CourseCard
-                title={course.data.title}
-                shortDesc={course.data.shortDesc}
-                level={course.data.level}
-                image={course.data.image}
-                {slug}
-                {lang}
-              />
-            );
-          })}
-        </div>
-        <div class="section-cta">
-          <a href={`${base}/cursos/`} class="btn btn--primary">{t('home.courses.more')}</a>
-        </div>
-      </div>
-    </section>
-  )}
 
   <!-- Profesores -->
   {teachers.length > 0 && (
