@@ -16,19 +16,25 @@ interface CalendarHighlightEntryInput {
   description: Record<Lang, string>;
 }
 
-interface LocalizedEntry {
-  dayKey: string;
+interface CalendarEventSummary {
+  eventKey: string;
   startDate: string;
   endDate: string;
+  dateLabel: string;
   color: string;
   label: string;
   description: string;
 }
 
+interface LocalizedEntry {
+  dayKey: string;
+  event: CalendarEventSummary;
+}
+
 interface MonthCell {
   key: string;
   dayNumber?: number;
-  entry?: LocalizedEntry;
+  entry?: CalendarEventSummary;
   isPlaceholder: boolean;
 }
 
@@ -36,8 +42,8 @@ const { lang } = Astro.props;
 const t = useTranslations(lang);
 const locale = lang === 'ca' ? 'ca-ES' : 'es-ES';
 const emptyDetailsMessage = lang === 'ca'
-  ? 'Selecciona un dia ressaltat per veure la informació.'
-  : 'Selecciona un día resaltado para ver la información.';
+  ? 'No hi ha activitats destacades en els mesos visibles.'
+  : 'No hay actividades destacadas en los meses visibles.';
 
 const parseIsoDate = (value: string) => {
   const [year, month, day] = value.split('-').map(Number);
@@ -51,6 +57,18 @@ const toIsoDate = (date: Date) => {
   return `${year}-${month}-${day}`;
 };
 
+const eventDateFormatter = new Intl.DateTimeFormat(locale, { day: 'numeric', month: 'short' });
+
+const formatEventDateLabel = (startIsoDate: string, endIsoDate: string) => {
+  const startDate = parseIsoDate(startIsoDate);
+  const endDate = parseIsoDate(endIsoDate);
+  if (startIsoDate === endIsoDate) {
+    return eventDateFormatter.format(startDate);
+  }
+
+  return `${eventDateFormatter.format(startDate)} - ${eventDateFormatter.format(endDate)}`;
+};
+
 const rawStartMonth = new Date(calendarHighlights.range.start.year, calendarHighlights.range.start.month - 1, 1);
 const rawEndMonth = new Date(calendarHighlights.range.end.year, calendarHighlights.range.end.month - 1, 1);
 const [startMonth, endMonth] = rawStartMonth <= rawEndMonth
@@ -59,7 +77,7 @@ const [startMonth, endMonth] = rawStartMonth <= rawEndMonth
 
 const calendarEntries = calendarHighlights.entries as CalendarHighlightEntryInput[];
 
-const localizedEntries: LocalizedEntry[] = calendarEntries.flatMap((entry) => {
+const localizedEvents: CalendarEventSummary[] = calendarEntries.flatMap((entry, index) => {
   const rawStartDate = entry.startDate ?? entry.date;
   const rawEndDate = entry.endDate ?? entry.date;
   if (!rawStartDate || !rawEndDate) {
@@ -73,6 +91,21 @@ const localizedEntries: LocalizedEntry[] = calendarEntries.flatMap((entry) => {
     : [parsedEnd, parsedStart];
   const normalizedStartDate = toIsoDate(rangeStart);
   const normalizedEndDate = toIsoDate(rangeEnd);
+
+  return [{
+    eventKey: `event-${index}`,
+    startDate: normalizedStartDate,
+    endDate: normalizedEndDate,
+    dateLabel: formatEventDateLabel(normalizedStartDate, normalizedEndDate),
+    color: entry.color,
+    label: entry.label[lang],
+    description: entry.description[lang],
+  }];
+});
+
+const localizedEntries: LocalizedEntry[] = localizedEvents.flatMap((event) => {
+  const rangeStart = parseIsoDate(event.startDate);
+  const rangeEnd = parseIsoDate(event.endDate);
   const expandedEntries: LocalizedEntry[] = [];
 
   for (
@@ -82,18 +115,14 @@ const localizedEntries: LocalizedEntry[] = calendarEntries.flatMap((entry) => {
   ) {
     expandedEntries.push({
       dayKey: toIsoDate(cursor),
-      startDate: normalizedStartDate,
-      endDate: normalizedEndDate,
-      color: entry.color,
-      label: entry.label[lang],
-      description: entry.description[lang],
+      event,
     });
   }
 
   return expandedEntries;
 });
 
-const entriesByDate = new Map(localizedEntries.map((entry) => [entry.dayKey, entry]));
+const entriesByDate = new Map(localizedEntries.map((entry) => [entry.dayKey, entry.event]));
 const monthFormatter = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' });
 const weekdayFormatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
 const weekdayLabels = Array.from({ length: 7 }, (_, index) => {
@@ -102,7 +131,6 @@ const weekdayLabels = Array.from({ length: 7 }, (_, index) => {
 });
 
 const months = [];
-let initialEntry: LocalizedEntry | null = null;
 
 for (
   let cursor = new Date(startMonth.getFullYear(), startMonth.getMonth(), 1);
@@ -114,6 +142,7 @@ for (
   const firstWeekday = (new Date(year, monthIndex, 1).getDay() + 6) % 7;
   const daysInMonth = new Date(year, monthIndex + 1, 0).getDate();
   const cells: MonthCell[] = [];
+  const monthEvents = new Map<string, CalendarEventSummary>();
 
   for (let offset = 0; offset < firstWeekday; offset += 1) {
     cells.push({
@@ -125,8 +154,8 @@ for (
   for (let day = 1; day <= daysInMonth; day += 1) {
     const isoDate = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
     const entry = entriesByDate.get(isoDate);
-    if (!initialEntry && entry) {
-      initialEntry = entry;
+    if (entry && !monthEvents.has(entry.eventKey)) {
+      monthEvents.set(entry.eventKey, entry);
     }
 
     cells.push({
@@ -141,6 +170,7 @@ for (
     key: `${year}-${monthIndex + 1}`,
     title: monthFormatter.format(cursor),
     cells,
+    events: Array.from(monthEvents.values()),
   });
 }
 
@@ -173,7 +203,7 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
 
     <div class="calendar-strip__months" data-calendar-months role="list">
       {months.map((month) => (
-        <article class="calendar-strip__month-card" role="listitem">
+        <article class="calendar-strip__month-card" role="listitem" data-calendar-month-events={JSON.stringify(month.events)}>
           <h4 class="calendar-strip__month-title">{month.title}</h4>
           <div class="calendar-strip__weekdays" aria-hidden="true">
             {weekdayLabels.map((weekday) => (
@@ -188,19 +218,14 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
 
               if (cell.entry) {
                 return (
-                  <button
-                    type="button"
-                    class:list={['calendar-strip__day', 'is-highlighted', { 'is-selected': initialEntry?.dayKey === cell.entry.dayKey }]}
+                  <span
+                    class="calendar-strip__day is-highlighted"
                     style={`--calendar-accent:${cell.entry.color}`}
-                    data-calendar-entry
-                    data-calendar-label={cell.entry.label}
-                    data-calendar-description={cell.entry.description}
-                    data-calendar-color={cell.entry.color}
-                    title={cell.entry.label}
+                    title={`${cell.entry.label} (${cell.entry.dateLabel})`}
                   >
                     <span class="calendar-strip__number">{cell.dayNumber}</span>
                     <span class="calendar-strip__dot"></span>
-                  </button>
+                  </span>
                 );
               }
 
@@ -226,14 +251,7 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
   </div>
 
   <div class="calendar-strip__details" data-calendar-details>
-    {initialEntry ? (
-      <div class="calendar-strip__details-card" style={`--calendar-accent:${initialEntry.color}`}>
-        <p class="calendar-strip__details-label">{initialEntry.label}</p>
-        <p class="calendar-strip__details-text">{initialEntry.description}</p>
-      </div>
-    ) : (
-      <p class="calendar-strip__details-empty">{emptyDetailsMessage}</p>
-    )}
+    <p class="calendar-strip__details-empty">{emptyDetailsMessage}</p>
   </div>
 </section>
 
@@ -246,7 +264,92 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
     const prevButton = root.querySelector('[data-calendar-prev]');
     const nextButton = root.querySelector('[data-calendar-next]');
     const detailsEl = root.querySelector('[data-calendar-details]');
-    const entryButtons = Array.from(root.querySelectorAll('[data-calendar-entry]'));
+    const emptyDetails = root.dataset.emptyDetails || '';
+    const monthCards = Array.from(root.querySelectorAll('.calendar-strip__month-card'));
+    const monthData = monthCards.map((card) => ({
+      card,
+      events: JSON.parse(card.dataset.calendarMonthEvents || '[]'),
+    }));
+
+    const renderVisibleEvents = () => {
+      if (!(monthsEl instanceof HTMLElement) || !(detailsEl instanceof HTMLElement)) {
+        return;
+      }
+
+      const viewportRect = monthsEl.getBoundingClientRect();
+      const groups = new Map();
+
+      monthData.forEach(({ card, events }) => {
+        const rect = card.getBoundingClientRect();
+        const isVisible = rect.right > viewportRect.left + 1 && rect.left < viewportRect.right - 1;
+        if (!isVisible) {
+          return;
+        }
+
+        events.forEach((event) => {
+          let group = groups.get(event.color);
+          if (!group) {
+            group = {
+              color: event.color,
+              items: [],
+              seenKeys: new Set(),
+            };
+            groups.set(event.color, group);
+          }
+
+          if (!group.seenKeys.has(event.eventKey)) {
+            group.seenKeys.add(event.eventKey);
+            group.items.push(event);
+          }
+        });
+      });
+
+      if (!groups.size) {
+        detailsEl.innerHTML = `<p class="calendar-strip__details-empty">${emptyDetails}</p>`;
+        return;
+      }
+
+      const groupsWrap = document.createElement('div');
+      groupsWrap.className = 'calendar-strip__details-groups';
+
+      groups.forEach((group) => {
+        const groupEl = document.createElement('section');
+        groupEl.className = 'calendar-strip__details-group';
+        groupEl.style.setProperty('--calendar-accent', group.color);
+
+        const list = document.createElement('ul');
+        list.className = 'calendar-strip__details-list';
+
+        group.items.forEach((event) => {
+          const item = document.createElement('li');
+          item.className = 'calendar-strip__details-item';
+
+          const label = document.createElement('span');
+          label.className = 'calendar-strip__details-item-label';
+          label.textContent = event.label;
+
+          const date = document.createElement('span');
+          date.className = 'calendar-strip__details-item-date';
+          date.textContent = event.dateLabel;
+
+          const separator = document.createElement('span');
+          separator.className = 'calendar-strip__details-item-separator';
+          separator.setAttribute('aria-hidden', 'true');
+
+          const text = document.createElement('span');
+          text.className = 'calendar-strip__details-item-text';
+          text.textContent = event.description || event.label;
+
+          item.append(date, separator, text);
+          list.appendChild(item);
+        });
+
+        groupEl.append(list);
+        groupsWrap.appendChild(groupEl);
+      });
+
+      detailsEl.replaceChildren(groupsWrap);
+    };
 
     const updateNavState = () => {
       if (!(monthsEl instanceof HTMLElement) || !(prevButton instanceof HTMLButtonElement) || !(nextButton instanceof HTMLButtonElement)) {
@@ -258,6 +361,11 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
 
       prevButton.disabled = !hasOverflow || monthsEl.scrollLeft <= 1;
       nextButton.disabled = !hasOverflow || monthsEl.scrollLeft >= maxScrollLeft;
+    };
+
+    const updateViewportState = () => {
+      updateNavState();
+      renderVisibleEvents();
     };
 
     const scrollByMonth = (direction) => {
@@ -279,37 +387,10 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
     if (monthsEl instanceof HTMLElement && prevButton instanceof HTMLButtonElement && nextButton instanceof HTMLButtonElement) {
       prevButton.addEventListener('click', () => scrollByMonth(-1));
       nextButton.addEventListener('click', () => scrollByMonth(1));
-      monthsEl.addEventListener('scroll', updateNavState, { passive: true });
-      new ResizeObserver(updateNavState).observe(monthsEl);
-      requestAnimationFrame(updateNavState);
+      monthsEl.addEventListener('scroll', updateViewportState, { passive: true });
+      new ResizeObserver(updateViewportState).observe(monthsEl);
+      requestAnimationFrame(updateViewportState);
     }
-
-    if (!(detailsEl instanceof HTMLElement) || !entryButtons.length) return;
-
-    const renderDetails = (button) => {
-      const card = document.createElement('div');
-      card.className = 'calendar-strip__details-card';
-      card.style.setProperty('--calendar-accent', button.dataset.calendarColor || '#c6b300');
-
-      const label = document.createElement('p');
-      label.className = 'calendar-strip__details-label';
-      label.textContent = button.dataset.calendarLabel || '';
-
-      const text = document.createElement('p');
-      text.className = 'calendar-strip__details-text';
-      text.textContent = button.dataset.calendarDescription || '';
-
-      card.append(label, text);
-      detailsEl.replaceChildren(card);
-    };
-
-    entryButtons.forEach((button) => {
-      button.addEventListener('click', () => {
-        entryButtons.forEach((entryButton) => entryButton.classList.remove('is-selected'));
-        button.classList.add('is-selected');
-        renderDetails(button);
-      });
-    });
   })();
 </script>
 
@@ -461,12 +542,6 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
   .calendar-strip__day.is-highlighted {
     border-color: color-mix(in srgb, var(--calendar-accent) 55%, white);
     background: color-mix(in srgb, var(--calendar-accent) 10%, white);
-    cursor: pointer;
-  }
-
-  .calendar-strip__day.is-selected {
-    outline: 2px solid var(--calendar-accent);
-    outline-offset: 1px;
   }
 
   .calendar-strip__day--empty {
@@ -492,25 +567,57 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
     min-height: 4.75rem;
   }
 
-  .calendar-strip__details-card {
-    padding: 1rem 1.1rem;
+  :global(.calendar-strip__details-groups) {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  :global(.calendar-strip__details-group) {
+    padding: 0.9rem 1rem;
     border-radius: 1rem;
-    background: color-mix(in srgb, var(--calendar-accent) 12%, white);
+    background: color-mix(in srgb, var(--calendar-accent) 14%, white);
     border-inline-start: 4px solid var(--calendar-accent);
   }
 
-  .calendar-strip__details-label,
-  .calendar-strip__details-text,
-  .calendar-strip__details-empty {
+  :global(.calendar-strip__details-list) {
+    display: grid;
+    gap: 0.55rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  :global(.calendar-strip__details-item) {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  :global(.calendar-strip__details-item-date),
+  :global(.calendar-strip__details-item-text),
+  :global(.calendar-strip__details-empty) {
     margin: 0;
   }
 
-  .calendar-strip__details-label {
+  :global(.calendar-strip__details-item-date) {
     font-weight: 700;
-    margin-bottom: 0.25rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
   }
 
-  .calendar-strip__details-empty {
+  :global(.calendar-strip__details-item-separator) {
+    width: 0.85rem;
+    height: 1px;
+    background: color-mix(in srgb, var(--calendar-accent) 65%, transparent);
+    transform: translateY(-0.12rem);
+  }
+
+  :global(.calendar-strip__details-item-text) {
+    flex: 1 1 16rem;
+  }
+
+  :global(.calendar-strip__details-empty) {
     color: var(--color-text-muted);
   }
 

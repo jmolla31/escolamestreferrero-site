@@ -122,13 +122,14 @@ const homeCards = [
             );
           })}
         </div>
-        <CalendarStrip {lang} />
         <div class="section-cta">
           <a href={`${base}/${lang === 'ca' ? 'professors' : 'profesores'}/`} class="btn btn--outline">{t('home.teachers.more')}</a>
         </div>
       </div>
     </section>
   )}
+
+  <CalendarStrip {lang} />
 
   <!-- Próximos eventos -->
   {upcomingEvents.length > 0 && (
