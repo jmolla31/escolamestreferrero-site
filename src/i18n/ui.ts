@@ -54,6 +54,9 @@ export const ui = {
     // Sobre nosotros
     'about.title': 'Sobre nosotros',
 
+    // Banda Jove
+    'bandajove.title': 'Banda Joven',
+
     // Contacto
     'contact.title': 'Contacto',
     'contact.phone': 'Teléfono',
@@ -76,7 +79,7 @@ export const ui = {
   ca: {
     // Navegació
     'nav.home': 'Inici',
-    'nav.about': 'Sobre nosaltres',
+    'nav.about': 'La Nostra Escola',
     'nav.courses': 'Oferta Educativa',
     'nav.teachers': 'Professors',
     'nav.blog': 'Notícies',
@@ -120,7 +123,10 @@ export const ui = {
     'gallery.title': 'Galeria',
 
     // Sobre nosaltres
-    'about.title': 'Sobre nosaltres',
+    'about.title': 'La Nostra Escola',
+
+    // Banda Jove
+    'bandajove.title': 'Banda Jove',
 
     // Contacte
     'contact.title': 'Contacte',

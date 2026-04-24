@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('bandajove.title')} {lang}>
+  <div class="container section">
+    <SectionHeader title={t('bandajove.title')} />
+
+    <div class="prose bandajove-content">
+      <p>
+        {lang === 'ca'
+          ? "La Banda Jove és l'agrupació musical juvenil de l'escola. Formada per alumnes de diferents especialitats, ofereix una experiència d'interpretació en conjunt única, preparant els joves músics per a actuacions en directe i fomentant el treball en equip."
+          : 'La Banda Jove es la agrupación musical juvenil de la escuela. Formada por alumnos de diferentes especialidades, ofrece una experiencia de interpretación en conjunto única, preparando a los jóvenes músicos para actuaciones en directo y fomentando el trabajo en equipo.'
+        }
+      </p>
+      <!-- Añade más contenido aquí -->
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .bandajove-content {
+    max-width: 70ch;
+  }
+</style>
