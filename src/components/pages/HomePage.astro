@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Hero from '../../components/Hero.astro';
 import SectionHeader from '../../components/SectionHeader.astro';
 import CourseCard from '../../components/CourseCard.astro';
 import TeacherCard from '../../components/TeacherCard.astro';
@@ -58,6 +57,38 @@ const latestPosts = allPosts
   })
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
   .slice(0, 3);
+
+// ── Home hero cards (edit freely to mix blog, pages, events…) ──────────────
+const homeCards = [
+  {
+    image: '/uploads/blog/matricula-oberta.jpg',
+    label: { ca: 'Notícies',    es: 'Noticias' },
+    title: { ca: 'Matrícula oberta 2026/2027', es: 'Matrícula abierta 2026/2027' },
+    href:  { ca: '/blog/matricula-oberta-2026-2027/', es: '/es/blog/matricula-abierta-2026-2027/' },
+    cta:   { ca: 'Llegir més →', es: 'Leer más →' },
+  },
+  {
+    image: '/uploads/blog/masterclass-vent.jpg',
+    label: { ca: 'Notícies',    es: 'Noticias' },
+    title: { ca: 'Masterclass de vent-fusta al juny', es: 'Masterclass de viento-madera en junio' },
+    href:  { ca: '/blog/masterclass-vent-fusta/', es: '/es/blog/masterclass-viento-madera/' },
+    cta:   { ca: 'Llegir més →', es: 'Leer más →' },
+  },
+  {
+    image: '/uploads/hero/hero-main.jpg',
+    label: { ca: "L'escola",    es: 'La escuela' },
+    title: { ca: 'Sobre nosaltres', es: 'Sobre nosotros' },
+    href:  { ca: '/sobre-nosaltres/', es: '/es/sobre-nosotros/' },
+    cta:   { ca: 'Descobrir →', es: 'Descubrir →' },
+  },
+  {
+    image: '/uploads/blog/nueva-web.jpg',
+    label: { ca: 'Notícies',    es: 'Noticias' },
+    title: { ca: 'Benvinguts a la nova web', es: 'Bienvenidos a la nueva web' },
+    href:  { ca: '/blog/benvinguts/', es: '/es/blog/bienvenidos/' },
+    cta:   { ca: 'Llegir més →', es: 'Leer más →' },
+  },
+];
 ---
 
 <BaseLayout
@@ -67,17 +98,23 @@ const latestPosts = allPosts
     : `Bienvenido a ${siteConfig.schoolName}. Descubre nuestros cursos de música.`}
   {lang}
 >
-  <!-- Hero -->
-  <Hero
-    headline={lang === 'ca'
-      ? `Aprèn música.<br><em>Viu la passió.</em>`
-      : `Aprende música.<br><em>Vive la pasión.</em>`}
-    tagline={lang === 'ca'
-      ? `Formació musical de qualitat per a tots els nivells i edats.`
-      : `Formación musical de calidad para todos los niveles y edades.`}
-    bgImage="/uploads/hero/hero-main.jpg"
-    {lang}
-  />
+  <!-- Home hero cards (mixed content) -->
+  <section class="news-hero" aria-label={lang === 'ca' ? 'Destacats' : 'Destacados'}>
+    <div class="news-hero__grid">
+      {homeCards.map(card => (
+        <a
+          href={card.href[lang]}
+          class="news-hero__card"
+          style={card.image ? `--card-bg: url('${card.image}')` : ''}
+        >
+          <div class="news-hero__overlay" aria-hidden="true"></div>
+          <div class="news-hero__body">
+            <h2 class="news-hero__title">{card.title[lang]}</h2>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
 
   <!-- Cursos destacados -->
   {featuredCourses.length > 0 && (
@@ -260,5 +297,69 @@ const latestPosts = allPosts
     color: rgba(255, 255, 255, 0.75);
     max-width: 52ch;
     margin: 0;
+  }
+
+  /* ── News image-button cards ─────────────────────────── */
+  .news-hero {
+    width: 100%;
+  }
+
+  .news-hero__grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, clamp(220px, 30vw, 360px));
+  }
+
+  .news-hero__card {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+    text-decoration: none;
+    background-color: var(--color-brand);
+    background-image: var(--card-bg, none);
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    transition: transform 0.35s ease;
+  }
+
+  .news-hero__card:hover,
+  .news-hero__card:focus-visible {
+    z-index: 1;
+    transform: scale(1.02);
+    outline: 3px solid var(--color-accent, #c6b300);
+    outline-offset: -3px;
+  }
+
+  .news-hero__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(14, 18, 53, 0.85) 0%, rgba(14, 18, 53, 0.25) 60%, transparent 100%);
+    transition: background 0.35s ease;
+  }
+
+  .news-hero__card:hover .news-hero__overlay {
+    background: linear-gradient(to top, rgba(14, 18, 53, 0.92) 0%, rgba(14, 18, 53, 0.4) 60%, transparent 100%);
+  }
+
+  .news-hero__body {
+    position: relative;
+    padding: 1.25rem 1.5rem;
+  }
+
+  .news-hero__title {
+    margin: 0;
+    font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+    line-height: 1.25;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  @media (max-width: 600px) {
+    .news-hero__grid {
+      grid-template-columns: 1fr;
+      grid-template-rows: repeat(4, clamp(180px, 50vw, 260px));
+    }
   }
 </style>
