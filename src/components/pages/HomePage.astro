@@ -203,12 +203,12 @@ const homeCards = [
   .teachers-strip {
     display: flex;
     flex-wrap: nowrap;
-    justify-content: safe center;
     gap: 1.5rem;
     overflow-x: auto;
-    scroll-snap-type: x mandatory;
+    overflow-y: clip;
     -webkit-overflow-scrolling: touch;
-    padding-bottom: 1rem;
+    scroll-snap-type: x proximity;
+    padding-bottom: 0.5rem;
     scrollbar-width: thin;
     scrollbar-color: var(--color-border) transparent;
   }
@@ -227,7 +227,7 @@ const homeCards = [
   }
 
   .teachers-strip > :global(.teacher-card) {
-    flex: 0 0 160px;
+    flex: 1 0 160px;
     scroll-snap-align: start;
   }
 
