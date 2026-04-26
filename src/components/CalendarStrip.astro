@@ -203,7 +203,7 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
 
     <div class="calendar-strip__months" data-calendar-months role="list">
       {months.map((month) => (
-        <article class="calendar-strip__month-card" role="listitem" data-calendar-month-events={JSON.stringify(month.events)}>
+        <article class="calendar-strip__month-card" role="listitem" data-calendar-month-key={month.key} data-calendar-month-events={JSON.stringify(month.events)}>
           <h4 class="calendar-strip__month-title">{month.title}</h4>
           <div class="calendar-strip__weekdays" aria-hidden="true">
             {weekdayLabels.map((weekday) => (
@@ -389,6 +389,14 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
       nextButton.addEventListener('click', () => scrollByMonth(1));
       monthsEl.addEventListener('scroll', updateViewportState, { passive: true });
       new ResizeObserver(updateViewportState).observe(monthsEl);
+
+      const now = new Date();
+      const currentMonthKey = `${now.getFullYear()}-${now.getMonth() + 1}`;
+      const currentMonthCard = monthsEl.querySelector(`[data-calendar-month-key="${currentMonthKey}"]`);
+      if (currentMonthCard) {
+        currentMonthCard.scrollIntoView({ behavior: 'auto', block: 'nearest', inline: 'start' });
+      }
+
       requestAnimationFrame(updateViewportState);
     }
   })();
