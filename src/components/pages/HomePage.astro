@@ -54,28 +54,28 @@ const homeCards = [
     image: '/uploads/blog/matricula-oberta.jpg',
     label: { ca: 'Notícies',    es: 'Noticias' },
     title: { ca: 'Matrícula oberta 2026/2027', es: 'Matrícula abierta 2026/2027' },
-    href:  { ca: '/blog/matricula-oberta-2026-2027/', es: '/es/blog/matricula-abierta-2026-2027/' },
+    href:  { ca: '/blog/matricula-oberta-2026-2027/', es: '/es/blog/matricula-oberta-2026-2027/' },
     cta:   { ca: 'Llegir més →', es: 'Leer más →' },
   },
   {
     image: '/uploads/blog/aules-obertes.jpg',
     label: { ca: 'Notícies',    es: 'Noticias' },
     title: { ca: 'Aules Obertes', es: 'Aulas Abiertas' },
-    href:  { ca: '/blog/aules-obertes/', es: '/es/blog/aulas-abiertas/' },
+    href:  { ca: '/blog/aules-obertes/', es: '/es/blog/aules-obertes/' },
     cta:   { ca: 'Llegir més →', es: 'Leer más →' },
   },
-  {
-    image: '/uploads/hero/hero-main.jpg',
-    label: { ca: "L'escola",    es: 'La escuela' },
-    title: { ca: 'La Nostra Escola', es: 'Nuestra Escuela' },
-    href:  { ca: '/sobre-nosaltres/', es: '/es/sobre-nosotros/' },
-    cta:   { ca: 'Descobrir →', es: 'Descubrir →' },
-  },
+   {
+     image: '/uploads/hero/hero-main.jpg',
+     label: { ca: 'Oferta educativa', es: 'Oferta educativa' },
+     title: { ca: 'Oferta Educativa', es: 'Oferta Educativa' },
+     href:  { ca: '/cursos/', es: '/es/cursos/' },
+     cta:   { ca: 'Descobrir →', es: 'Descubrir →' },
+   },
   {
     image: '/uploads/hero/hero-main.jpg',
     label: { ca: 'Agrupació',   es: 'Agrupación' },
     title: { ca: 'Banda Jove', es: 'Banda Joven' },
-    href:  { ca: '/banda-jove/', es: '/es/banda-joven/' },
+    href:  { ca: '/banda-jove/', es: '/es/banda-jove/' },
     cta:   { ca: 'Descobrir →', es: 'Descubrir →' },
   },
 ];
@@ -123,7 +123,7 @@ const homeCards = [
           })}
         </div>
         <div class="section-cta">
-          <a href={`${base}/${lang === 'ca' ? 'professors' : 'profesores'}/`} class="btn btn--outline">{t('home.teachers.more')}</a>
+           <a href={`${base}/professors/`} class="btn btn--outline">{t('home.teachers.more')}</a>
         </div>
       </div>
     </section>
@@ -155,7 +155,7 @@ const homeCards = [
           })}
         </div>
         <div class="section-cta">
-          <a href={`${base}/${lang === 'ca' ? 'esdeveniments' : 'eventos'}/`} class="btn btn--outline">{t('home.events.more')}</a>
+           <a href={`${base}/esdeveniments/`} class="btn btn--outline">{t('home.events.more')}</a>
         </div>
       </div>
     </section>
@@ -196,7 +196,7 @@ const homeCards = [
         ? 'Contacta\'ns sense compromís. T\'informarem de tots els cursos i activitats.'
         : 'Contáctanos sin compromiso. Te informaremos de todos los cursos y actividades.'
       }</p>
-      <a href={`${base}/${lang === 'ca' ? 'contacte' : 'contacto'}/`} class="btn btn--accent">
+       <a href={`${base}/contacte/`} class="btn btn--accent">
         {t('nav.contact')}
       </a>
     </div>

@@ -31,11 +31,11 @@ const base = lang === 'es' ? '/es' : '';
 
     <nav class="footer-nav" aria-label={lang === 'ca' ? 'Navegació del peu' : 'Navegación del pie'}>
       <ul role="list">
-        <li><a href={`${base}/cursos/`}>{t('nav.courses')}</a></li>
-        <li><a href={`${base}/${lang === 'ca' ? 'professors' : 'profesores'}/`}>{t('nav.teachers')}</a></li>
-        <li><a href={`${base}/${lang === 'ca' ? 'esdeveniments' : 'eventos'}/`}>{t('nav.events')}</a></li>
-        <li><a href={`${base}/blog/`}>{t('nav.blog')}</a></li>
-        <li><a href={`${base}/${lang === 'ca' ? 'contacte' : 'contacto'}/`}>{t('nav.contact')}</a></li>
+         <li><a href={`${base}/cursos/`}>{t('nav.courses')}</a></li>
+         <li><a href={`${base}/professors/`}>{t('nav.teachers')}</a></li>
+         <li><a href={`${base}/esdeveniments/`}>{t('nav.events')}</a></li>
+         <li><a href={`${base}/blog/`}>{t('nav.blog')}</a></li>
+         <li><a href={`${base}/contacte/`}>{t('nav.contact')}</a></li>
       </ul>
     </nav>
 
@@ -101,7 +101,6 @@ const base = lang === 'es' ? '/es' : '';
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: -0.02em;
-    text-transform: uppercase;
     color: #ffffff;
     margin: 0 0 0.75rem;
   }

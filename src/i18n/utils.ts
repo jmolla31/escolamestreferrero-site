@@ -24,38 +24,13 @@ export function getLangFromUrl(url: URL): Lang {
  * Genera la URL equivalente en el otro idioma.
  * Usa un mapa de segmentos de ruta que difieren entre ca y es.
  */
-const routeSegments: Record<string, string> = {
-  // ca → es
-  'sobre-nosaltres': 'sobre-nosotros',
-  'professors': 'profesores',
-  'contacte': 'contacto',
-  'esdeveniments': 'eventos',
-  'banda-jove': 'banda-joven',
-};
-
-// Build reverse map es → ca
-const reverseRouteSegments: Record<string, string> = Object.fromEntries(
-  Object.entries(routeSegments).map(([ca, es]) => [es, ca])
-);
-
 export function getAlternateLangUrl(url: URL): string {
   const lang = getLangFromUrl(url);
 
   if (lang === 'es') {
-    // Remove /es prefix, then translate es segments → ca
-    const withoutPrefix = url.pathname.replace(/^\/es/, '') || '/';
-    const translated = withoutPrefix
-      .split('/')
-      .map(seg => reverseRouteSegments[seg] || seg)
-      .join('/');
-    return translated || '/';
+    return url.pathname.replace(/^\/es/, '') || '/';
   } else {
-    // Translate ca segments → es, then add /es prefix
-    const translated = url.pathname
-      .split('/')
-      .map(seg => routeSegments[seg] || seg)
-      .join('/');
-    return `/es${translated}`;
+    return `/es${url.pathname}`;
   }
 }
 

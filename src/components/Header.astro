@@ -14,12 +14,12 @@ const base = lang === 'es' ? '/es' : '';
 
 const navLinks = [
   { key: 'nav.home' as const, href: `${base}/` },
-  { key: 'nav.about' as const, href: `${base}/${lang === 'ca' ? 'sobre-nosaltres' : 'sobre-nosotros'}/` },
+  { key: 'nav.about' as const, href: `${base}/sobre-nosaltres/` },
   { key: 'nav.courses' as const, href: `${base}/cursos/` },
-  { key: 'nav.teachers' as const, href: `${base}/${lang === 'ca' ? 'professors' : 'profesores'}/` },
-  { key: 'nav.events' as const, href: `${base}/${lang === 'ca' ? 'esdeveniments' : 'eventos'}/` },
+  { key: 'nav.teachers' as const, href: `${base}/professors/` },
+  { key: 'nav.events' as const, href: `${base}/esdeveniments/` },
   { key: 'nav.blog' as const, href: `${base}/blog/` },
-  { key: 'nav.contact' as const, href: `${base}/${lang === 'ca' ? 'contacte' : 'contacto'}/` },
+  { key: 'nav.contact' as const, href: `${base}/contacte/` },
 ];
 ---
 
@@ -94,7 +94,6 @@ const navLinks = [
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -0.02em;
-    text-transform: uppercase;
   }
 
   .main-nav {
