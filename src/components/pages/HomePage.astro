@@ -27,17 +27,6 @@ const teachers = allTeachers
   })
   .sort((a, b) => a.data.order - b.data.order);
 
-// Próximos eventos
-const now = new Date();
-const allEvents = await getCollection('eventos');
-const upcomingEvents = allEvents
-  .filter(e => {
-    const { lang: eLang } = parseContentPath(e.id);
-    return eLang === lang && e.data.startDate >= now;
-  })
-  .sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime())
-  .slice(0, 2);
-
 // Últimas noticias
 const allPosts = await getCollection('blog');
 const latestPosts = allPosts
@@ -133,34 +122,6 @@ const homeCards = [
     <CalendarStrip {lang} />
   </div>
 
-  <!-- Próximos eventos -->
-  {upcomingEvents.length > 0 && (
-    <section class="section">
-      <div class="container">
-        <SectionHeader title={t('home.events.title')} />
-        <div class="events-list">
-          {upcomingEvents.map(event => {
-            const { slug } = parseContentPath(event.id);
-            return (
-              <EventCard
-                title={event.data.title}
-                startDate={event.data.startDate}
-                location={event.data.location}
-                image={event.data.image}
-                ticketUrl={event.data.ticketUrl}
-                {slug}
-                {lang}
-              />
-            );
-          })}
-        </div>
-        <div class="section-cta">
-           <a href={`${base}/esdeveniments/`} class="btn btn--outline">{t('home.events.more')}</a>
-        </div>
-      </div>
-    </section>
-  )}
-
   <!-- Últimas noticias -->
   {latestPosts.length > 0 && (
     <section class="section section--alt">
@@ -233,12 +194,6 @@ const homeCards = [
   .teachers-strip > :global(.teacher-card) {
     flex: 1 0 160px;
     scroll-snap-align: start;
-  }
-
-  .events-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
   }
 
   .section-cta {

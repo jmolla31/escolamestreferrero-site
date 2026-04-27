@@ -20,7 +20,8 @@
             "description": {
                 "ca": "Preparació conjunta per a l'actuació de final de mes.",
                 "es": "Preparación conjunta para la actuación de final de mes."
-            }
+            },
+            "post": "/esdeveniments/assaig-general-2026"
         },
         {
             "startDate": "2026-05-12",

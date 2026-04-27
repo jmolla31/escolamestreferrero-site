@@ -14,6 +14,7 @@ interface CalendarHighlightEntryInput {
   color: string;
   label: Record<Lang, string>;
   description: Record<Lang, string>;
+  post?: string;
 }
 
 interface CalendarEventSummary {
@@ -24,6 +25,7 @@ interface CalendarEventSummary {
   color: string;
   label: string;
   description: string;
+  post?: string;
 }
 
 interface LocalizedEntry {
@@ -92,15 +94,16 @@ const localizedEvents: CalendarEventSummary[] = calendarEntries.flatMap((entry, 
   const normalizedStartDate = toIsoDate(rangeStart);
   const normalizedEndDate = toIsoDate(rangeEnd);
 
-  return [{
-    eventKey: `event-${index}`,
-    startDate: normalizedStartDate,
-    endDate: normalizedEndDate,
-    dateLabel: formatEventDateLabel(normalizedStartDate, normalizedEndDate),
-    color: entry.color,
-    label: entry.label[lang],
-    description: entry.description[lang],
-  }];
+    return [{
+      eventKey: `event-${index}`,
+      startDate: normalizedStartDate,
+      endDate: normalizedEndDate,
+      dateLabel: formatEventDateLabel(normalizedStartDate, normalizedEndDate),
+      color: entry.color,
+      label: entry.label[lang],
+      description: entry.description[lang],
+      post: entry.post,
+    }];
 });
 
 const localizedEntries: LocalizedEntry[] = localizedEvents.flatMap((event) => {
@@ -321,12 +324,14 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
         list.className = 'calendar-strip__details-list';
 
         group.items.forEach((event) => {
-          const item = document.createElement('li');
+          const li = document.createElement('li');
+          const item = event.post ? document.createElement('a') : document.createElement('div');
           item.className = 'calendar-strip__details-item';
-
-          const label = document.createElement('span');
-          label.className = 'calendar-strip__details-item-label';
-          label.textContent = event.label;
+          if (event.post) {
+            item.setAttribute('href', event.post);
+            item.style.textDecoration = 'none';
+            item.style.color = 'inherit';
+          }
 
           const date = document.createElement('span');
           date.className = 'calendar-strip__details-item-date';
@@ -341,7 +346,8 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
           text.textContent = event.description || event.label;
 
           item.append(date, separator, text);
-          list.appendChild(item);
+          li.appendChild(item);
+          list.appendChild(li);
         });
 
         groupEl.append(list);
@@ -600,6 +606,11 @@ const rangeLabel = `${monthFormatter.format(startMonth)} - ${monthFormatter.form
     align-items: baseline;
     gap: 0.75rem;
     flex-wrap: wrap;
+    transition: opacity 0.15s ease;
+  }
+
+  :global(.calendar-strip__details-item[href]:hover) {
+    opacity: 0.8;
   }
 
   :global(.calendar-strip__details-item-date),
