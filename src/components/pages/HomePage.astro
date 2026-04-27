@@ -27,17 +27,8 @@ const teachers = allTeachers
   })
   .sort((a, b) => a.data.order - b.data.order);
 
-// Últimas noticias
-const allPosts = await getCollection('blog');
-const latestPosts = allPosts
-  .filter(p => {
-    const { lang: pLang } = parseContentPath(p.id);
-    return pLang === lang && !p.data.draft;
-  })
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 3);
-
 // ── Home hero cards (edit freely to mix blog, pages, events…) ──────────────
+
 const homeCards = [
   {
     image: '/uploads/blog/matricula-oberta.jpg',
@@ -122,35 +113,9 @@ const homeCards = [
     <CalendarStrip {lang} />
   </div>
 
-  <!-- Últimas noticias -->
-  {latestPosts.length > 0 && (
-    <section class="section section--alt">
-      <div class="container">
-        <SectionHeader title={t('home.blog.title')} />
-        <div class="cards-grid">
-          {latestPosts.map(post => {
-            const { slug } = parseContentPath(post.id);
-            return (
-              <BlogCard
-                title={post.data.title}
-                excerpt={post.data.excerpt}
-                date={post.data.date}
-                heroImage={post.data.heroImage}
-                {slug}
-                {lang}
-              />
-            );
-          })}
-        </div>
-        <div class="section-cta">
-          <a href={`${base}/blog/`} class="btn btn--outline">{t('home.blog.more')}</a>
-        </div>
-      </div>
-    </section>
-  )}
-
   <!-- CTA de contacto -->
   <section class="section section--dark contact-cta">
+
     <div class="container">
       <h2>{lang === 'ca' ? '¿Vols saber-ne més?' : '¿Quieres saber más?'}</h2>
       <p>{lang === 'ca'

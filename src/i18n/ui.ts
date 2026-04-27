@@ -69,6 +69,11 @@ export const ui = {
     'contact.form.email': 'Email',
     'contact.form.message': 'Mensaje',
     'contact.form.send': 'Enviar',
+    'contact.form.success.title': '¡Éxito!',
+    'contact.form.success.msg': 'Tu mensaje ha sido enviado. Nos pondremos en contacto contigo pronto.',
+    'contact.form.error.title': 'Error',
+    'contact.form.error.msg': 'Algo salió mal. Por favor, inténtalo de nuevo.',
+    'contact.form.conn_error.msg': 'No se pudo conectar con el servidor. Por favor, comprueba tu conexión.',
     'contact.form.success': '¡Mensaje enviado correctamente!',
 
     // Footer
@@ -143,6 +148,11 @@ export const ui = {
     'contact.form.email': 'Email',
     'contact.form.message': 'Missatge',
     'contact.form.send': 'Enviar',
+    'contact.form.success.title': 'Èxit!',
+    'contact.form.success.msg': 'El teu missatge ha estat enviat. Et contactarem aviat.',
+    'contact.form.error.title': 'Error',
+    'contact.form.error.msg': 'S' + 'ha produït un error. Si us plau, torna a provar-ho.',
+    'contact.form.conn_error.msg': 'No s\'ha pogut connectar amb el servidor. Comprova la teva connexió.',
     'contact.form.success': 'Missatge enviat correctament!',
 
     // Footer

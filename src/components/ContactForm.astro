@@ -11,9 +11,23 @@ interface Props {
 
 const { lang, endpoint, buttonText, section } = Astro.props;
 const t = useTranslations(lang);
+
+const translations = {
+  successTitle: t('contact.form.success.title'),
+  successMsg: t('contact.form.success.msg'),
+  errorTitle: t('contact.form.error.title'),
+  errorMsg: t('contact.form.error.msg'),
+  connErrorMsg: t('contact.form.conn_error.msg'),
+};
 ---
 
-<div class="contact-form-container">
+<div class="contact-form-container" 
+     data-i18n-success-title={translations.successTitle}
+     data-i18n-success-msg={translations.successMsg}
+     data-i18n-error-title={translations.errorTitle}
+     data-i18n-error-msg={translations.errorMsg}
+     data-i18n-conn-error-msg={translations.connErrorMsg}
+>
   <form
     id="contact-form"
     class="contact-form"
@@ -219,13 +233,22 @@ const t = useTranslations(lang);
         const result = await response.json();
 
         if (result.result === 'success') {
-          showModal('Success!', 'Your message has been sent. We will contact you soon.');
+          showModal(
+            container.dataset['i18n-success-title'] || 'Success!', 
+            container.dataset['i18n-success-msg'] || 'Your message has been sent.'
+          );
           form.reset();
         } else {
-          showModal('Error', result.message || 'Something went wrong. Please try again.');
+          showModal(
+            container.dataset['i18n-error-title'] || 'Error', 
+            result.message || container.dataset['i18n-error-msg'] || 'Something went wrong.'
+          );
         }
       } catch (error) {
-        showModal('Error', 'Could not connect to the server. Please check your connection.');
+        showModal(
+          container.dataset['i18n-error-title'] || 'Error', 
+          container.dataset['i18n-conn-error-msg'] || 'Could not connect to the server.'
+        );
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalBtnText;
