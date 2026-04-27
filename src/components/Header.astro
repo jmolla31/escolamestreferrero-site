@@ -27,7 +27,6 @@ const navLinks = [
   <div class="container header-inner">
     <!-- Logo / Nombre -->
     <a href={`${base}/`} class="site-logo" aria-label={siteConfig.schoolName}>
-      <!-- Reemplaza con tu logo SVG o imagen -->
       <span class="site-logo__text">{siteConfig.schoolName}</span>
     </a>
 
@@ -77,7 +76,6 @@ const navLinks = [
     </div>
   </div>
 </header>
-
 
 <style>
   .site-header {
@@ -216,15 +214,6 @@ const navLinks = [
     gap: 0.75rem;
   }
 
-  @media (max-width: 992px) {
-    .header-actions {
-      display: none;
-    }
-    .header-menu-toggle {
-      display: block;
-    }
-
-
   .lang-switch {
     font-size: 0.78rem;
     font-weight: 700;
@@ -244,10 +233,12 @@ const navLinks = [
   }
 
   @media (max-width: 992px) {
+    .header-actions {
+      display: none;
+    }
     .header-menu-toggle {
       display: block;
     }
-
     .main-nav {
       position: fixed;
       top: 0;
@@ -261,27 +252,21 @@ const navLinks = [
       z-index: 100;
       box-shadow: -4px 0 16px rgba(0, 0, 0, 0.2);
     }
-
     .main-nav.is-open {
       transform: translateX(0);
     }
-
     .main-nav ul {
       flex-direction: column;
       gap: 1rem;
     }
-
     .main-nav__actions {
       display: block;
     }
-
     .main-nav__link {
       font-size: 1.1rem;
       padding: 0.75rem 1rem;
     }
   }
-
-
 </style>
 
 <script>
