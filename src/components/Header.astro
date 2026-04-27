@@ -27,8 +27,10 @@ const navLinks = [
   <div class="container header-inner">
     <!-- Logo / Nombre -->
     <a href={`${base}/`} class="site-logo" aria-label={siteConfig.schoolName}>
+      <img src="/favicon.ico" alt="" class="site-logo__icon" />
       <span class="site-logo__text">{siteConfig.schoolName}</span>
     </a>
+
 
     <!-- Navegación principal (desktop) -->
     <button
@@ -98,6 +100,15 @@ const navLinks = [
   .site-logo {
     text-decoration: none;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .site-logo__icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 4px;
   }
 
   @media (min-width: 993px) {
