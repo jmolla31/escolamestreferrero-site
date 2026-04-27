@@ -9,7 +9,7 @@ interface Props {
   section: string;
 }
 
-const { lang, endpoint, buttonText, section } = Astro.props;
+const { lang = 'ca', endpoint, buttonText, section } = Astro.props;
 const t = useTranslations(lang);
 
 const translations = {
@@ -22,11 +22,7 @@ const translations = {
 ---
 
 <div class="contact-form-container" 
-     data-i18n-success-title={translations.successTitle}
-     data-i18n-success-msg={translations.successMsg}
-     data-i18n-error-title={translations.errorTitle}
-     data-i18n-error-msg={translations.errorMsg}
-     data-i18n-conn-error-msg={translations.connErrorMsg}
+     data-translations={JSON.stringify(translations)}
 >
   <form
     id="contact-form"
@@ -192,38 +188,41 @@ const translations = {
 
 <script>
   function initContactForm() {
-    const container = document.querySelector('.contact-form-container');
-    if (!container) return;
+    const containers = document.querySelectorAll('.contact-form-container');
+    
+    containers.forEach(container => {
+      const form = container.querySelector('#contact-form') as HTMLFormElement;
+      const modal = container.querySelector('#contact-modal');
+      const modalTitle = container.querySelector('#modal-title');
+      const modalMessage = container.querySelector('#modal-message');
+      const modalClose = container.querySelector('#modal-close');
 
-    const form = container.querySelector('#contact-form') as HTMLFormElement;
-    const modal = container.querySelector('#contact-modal');
-    const modalTitle = container.querySelector('#modal-title');
-    const modalMessage = container.querySelector('#modal-message');
-    const modalClose = container.querySelector('#modal-close');
+      if (!form) return;
 
-    function showModal(title: string, message: string) {
-      if (!modal || !modalTitle || !modalMessage) return;
-      (modalTitle as HTMLElement).textContent = title;
-      (modalMessage as HTMLElement).textContent = message;
-      modal.setAttribute('aria-hidden', 'false');
-    }
+      function showModal(title: string, message: string) {
+        if (!modal || !modalTitle || !modalMessage) return;
+        (modalTitle as HTMLElement).textContent = title;
+        (modalMessage as HTMLElement).textContent = message;
+        modal.setAttribute('aria-hidden', 'false');
+      }
 
-    function closeModal() {
-      modal?.setAttribute('aria-hidden', 'true');
-    }
+      function closeModal() {
+        modal?.setAttribute('aria-hidden', 'true');
+      }
 
-    modalClose?.addEventListener('click', closeModal);
+      modalClose?.addEventListener('click', closeModal);
 
-    form?.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
       const submitBtn = form.querySelector('.form-submit') as HTMLButtonElement;
       const originalBtnText = submitBtn.textContent;
       
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending...';
+      submitBtn.textContent = '...';
 
       try {
+        const translations = JSON.parse(container.dataset.translations || '{}');
         const formData = new FormData(form);
         const response = await fetch(form.action, {
           method: 'POST',
@@ -234,28 +233,32 @@ const translations = {
 
         if (result.result === 'success') {
           showModal(
-            container.dataset['i18n-success-title'] || 'Success!', 
-            container.dataset['i18n-success-msg'] || 'Your message has been sent.'
+            translations.successTitle || 'Success!', 
+            translations.successMsg || 'Your message has been sent.'
           );
           form.reset();
         } else {
           showModal(
-            container.dataset['i18n-error-title'] || 'Error', 
-            result.message || container.dataset['i18n-error-msg'] || 'Something went wrong.'
+            translations.errorTitle || 'Error', 
+            result.message || translations.errorMsg || 'Something went wrong.'
           );
         }
       } catch (error) {
+        const translations = JSON.parse(container.dataset.translations || '{}');
         showModal(
-          container.dataset['i18n-error-title'] || 'Error', 
-          container.dataset['i18n-conn-error-msg'] || 'Could not connect to the server.'
+          translations.errorTitle || 'Error', 
+          translations.connErrorMsg || 'Could not connect to the server.'
         );
       } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = originalBtnText;
       }
     });
+
+    });
   }
 
   initContactForm();
   document.addEventListener('astro:after-swap', initContactForm);
 </script>
+

@@ -151,7 +151,7 @@ export const ui = {
     'contact.form.success.title': 'Èxit!',
     'contact.form.success.msg': 'El teu missatge ha estat enviat. Et contactarem aviat.',
     'contact.form.error.title': 'Error',
-    'contact.form.error.msg': 'S' + 'ha produït un error. Si us plau, torna a provar-ho.',
+    'contact.form.error.msg': 'S\'ha produït un error. Si us plau, torna a provar-ho.',
     'contact.form.conn_error.msg': 'No s\'ha pogut connectar amb el servidor. Comprova la teva connexió.',
     'contact.form.success': 'Missatge enviat correctament!',
 
