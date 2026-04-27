@@ -36,9 +36,10 @@ function doPost(e) {
     }
 
     // --- Actual Email Sending ---
+    const section = params.section || 'unknown';
     const recipient = "your-email@yourdomain.com";
-    const subject = `Contact Form Submission from ${name}`;
-    const body = `New message from website contact form:\n\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
+    const subject = `[${section}] Contact Form Submission from ${name}`;
+    const body = `Section: ${section}\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
     
     MailApp.sendEmail(recipient, subject, body);
 

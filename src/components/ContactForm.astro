@@ -6,9 +6,10 @@ interface Props {
   lang: Lang;
   endpoint: string;
   buttonText?: string;
+  section: string;
 }
 
-const { lang, endpoint, buttonText } = Astro.props;
+const { lang, endpoint, buttonText, section } = Astro.props;
 const t = useTranslations(lang);
 ---
 
@@ -20,6 +21,7 @@ const t = useTranslations(lang);
     method="POST"
     novalidate
   >
+    <input type="hidden" name="section" value={section} />
     <div class="form-field">
       <label for="name">{t('contact.form.name')} *</label>
       <input

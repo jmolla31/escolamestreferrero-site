@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getEntry, render } from 'astro:content';
 import { useTranslations } from '../../i18n/utils';
 import type { Lang } from '../../i18n/ui';
+import ContactForm from '../../components/ContactForm.astro';
 
 const { postId, lang } = Astro.props as { postId: string; lang: Lang };
 const post = await getEntry('blog', postId);
@@ -43,7 +44,7 @@ const dateStr = post.data.date.toLocaleDateString(lang === 'ca' ? 'ca-ES' : 'es-
       </header>
 
       <div class="prose">
-        <Content />
+        <Content lang={lang} />
       </div>
 
       <div class="post-back">

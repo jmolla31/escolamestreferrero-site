@@ -4,10 +4,11 @@ function doPost(e) {
     const name = params.name;
     const email = params.email;
     const message = params.message;
+    const section = params.section || 'unknown';
     
     const recipient = "your-email@yourdomain.com"; // Your Gmail address
-    const subject = `Contact Form Submission from ${name}`;
-    const body = `New message from website contact form:\n\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
+    const subject = `[${section}] Contact Form Submission from ${name}`;
+    const body = `Section: ${section}\nName: ${name}\nEmail: ${email}\nMessage: ${message}`;
     
     MailApp.sendEmail(recipient, subject, body);
     

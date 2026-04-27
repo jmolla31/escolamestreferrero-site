@@ -1,0 +1,27 @@
+---
+title: Matrícula abierta para el curso 2026/2027
+date: 2026-04-10
+heroImage: /uploads/blog/matricula-oberta.jpg
+excerpt: Ya puedes reservar plaza para el próximo curso en las especialidades instrumentales, lenguaje musical e iniciación.
+draft: false
+---
+import ContactForm from '../../components/ContactForm.astro';
+
+Ya está abierto el periodo de matrícula para el curso 2026/2027. Las familias interesadas pueden solicitar información y reservar plaza desde este momento.
+
+La oferta incluye clases individuales, iniciación musical, agrupaciones y actividades complementarias.
+
+<section style="margin-block: 4rem; padding-block: 3rem; background-color: var(--color-surface-alt); border-radius: 1.5rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 3rem; align-items: center; max-width: 800px; margin-inline: auto; padding: 0 1rem;">
+    <div style="text-align: left;">
+      <h2 style="margin: 0 0 0.5rem;">Solicita más información</h2>
+      <p style="color: var(--color-text-muted); margin: 0;">Si tienes dudas sobre la matrícula o quieres saber más sobre nuestros cursos, rellena este formulario y nos pondremos en contacto contigo.</p>
+    </div>
+    <ContactForm 
+      lang={props.lang} 
+      endpoint="https://script.google.com/macros/s/AKfycbxRrnJbnaMb55rNu36GSPr51o9ibm_PpaWGJcMqWhouoICiLn7KrCiC3O92WYUkCUVt/exec" 
+      buttonText="Enviar solicitud"
+      section="blog-matricula"
+    />
+  </div>
+</section>
