@@ -59,7 +59,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       {lang === 'ca' ? 'Saltar al contingut' : 'Saltar al contenido'}
     </a>
     <Header lang={lang} />
-    <main id="main-content">
+    <main id="main-content" style="flex: 1;">
       <slot />
     </main>
     <Footer lang={lang} />
