@@ -24,6 +24,7 @@ const levelLabels: Record<string, { es: string; ca: string }> = {
 };
 
 const levelLabel = levelLabels[level]?.[lang] ?? level;
+const trimmedDesc = shortDesc.length > 120 ? shortDesc.slice(0, 120).trimEnd() + '...' : shortDesc;
 ---
 
 <article class="course-card">
@@ -38,7 +39,7 @@ const levelLabel = levelLabels[level]?.[lang] ?? level;
     <h3 class="course-card__title">
       <a href={`${base}/cursos/${slug}/`}>{title}</a>
     </h3>
-    <p class="line-clamp-3">{shortDesc}</p>
+    <p>{trimmedDesc}</p>
     <a href={`${base}/cursos/${slug}/`} class="btn btn--outline course-card__cta">
       {t('courses.readMore')} →
     </a>

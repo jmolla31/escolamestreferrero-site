@@ -4,24 +4,19 @@ description: La Banda Joven es la agrupación musical juvenil de la escuela, don
 order: 2
 ---
 
-La Banda Joven es la agrupación musical juvenil de la Escuela de Música José María Ferrero. Formada por alumnos de
-diferentes especialidades instrumentales, ofrece una experiencia de interpretación en conjunto que va mucho más allá de la
-formación individual en el aula.
+La Banda Joven nació en octubre de 1997 y se presentó públicamente en el Concierto de Santa Cecilia del 30 de noviembre de
+ese mismo año. Desde su fundación, ha ejercido como espacio de encuentro entre jóvenes músicos con inquietudes y formación
+diversa, consolidándose como una de las agrupaciones de referencia dentro de la Sociedad Unión Artística Musical de
+Ontinyent.
 
-## Un espacio de crecimiento colectivo
+La Banda Joven es una agrupación abierta a todos los jóvenes de Ontinyent con inquietud musical. A lo largo del año
+desarrolla una programación variada que incluye actuaciones en las fiestas de barrio y de pueblo, colaboraciones con otras
+asociaciones y entidades locales, intercambios con otras agrupaciones musicales y conciertos de programación diversa, como
+los dedicados a la música de cine. Una actividad rica que convierte la banda en mucho más que un conjunto musical: es un
+espacio de convivencia, de crecimiento personal y de compromiso con la cultura.
 
-Ensamblar y actuar en grupo permite a los jóvenes músicos desarrollar habilidades esenciales como la escucha activa, la
-coordinación, la disciplina y el trabajo en equipo. Cada ensayo es una oportunidad para crecer juntos, compartir retos y
-celebrar los progresos colectivos.
+La dirección actual de la Banda Joven recae en Jaume Blanquer, quien continúa impulsando el proyecto con la misma ilusión
+de sus inicios.
 
-## Repertorio y actuaciones
-
-La Banda Joven trabaja un repertorio diverso que va desde las bandas sonoras y la música popular hasta obras originales
-para banda. A lo largo del curso, la agrupación participa en audiciones, conciertos y encuentros musicales que permiten al
-alumnado mostrar su trabajo ante el público y vivir la música en directo desde dentro.
-
-## El vínculo con la Banda Sinfónica
-
-La Banda Joven constituye la cantera natural de la Banda Sinfónica de la Sociedad Unión Artística Musical de Ontinyent.
-Para muchos alumnos, es el primer paso hacia la formación de referencia de la comarca, con la cual comparten valores,
-exigencia y pasión por la música.
+- **Ensayos:** Sábados a las 12:00 h
+- **Ubicación:** Calle del Dos de Maig, 72
