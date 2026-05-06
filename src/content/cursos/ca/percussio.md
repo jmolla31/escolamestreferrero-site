@@ -3,6 +3,7 @@ title: Percussió
 order: 4
 level: todos
 image: /uploads/courses/percussio.jpg
+category: percussio
 featured: false
 shortDesc: "Formació integral en percussió: caixa, timbals i làmines, treballant ritme, coordinació i musicalitat."
 ---

@@ -13,27 +13,11 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
-const categoryQuery = Astro.url.searchParams.get('category');
-
-const courseCategories: Record<string, string[]> = {
-  'vent-fusta': ['clarinet', 'saxo'],
-  'vent-metall': ['trombo', 'tuba'],
-  'percussio': ['percussio'],
-  'grups': [], // Add group courses if any
-};
-
 const allCourses = await getCollection('cursos');
 const courses = allCourses
   .filter(c => {
-    const { lang: cLang, slug } = parseContentPath(c.id);
-    const matchesLang = cLang === lang;
-    
-    if (!categoryQuery) return matchesLang;
-    
-    const categoryCourses = courseCategories[categoryQuery] || [];
-    const matchesCategory = categoryCourses.includes(slug);
-    
-    return matchesLang && matchesCategory;
+    const { lang: cLang } = parseContentPath(c.id);
+    return cLang === lang;
   })
   .sort((a, b) => a.data.order - b.data.order);
 ---
@@ -41,28 +25,26 @@ const courses = allCourses
 <BaseLayout title={t('courses.title')} {lang}>
   <div class="container section">
     <SectionHeader title={t('courses.title')} />
-    {courses.length > 0
-      ? (
-        <div class="cards-grid">
-          {courses.map(course => {
-            const { slug } = parseContentPath(course.id);
-            return (
-              <CourseCard
-                title={course.data.title}
-                shortDesc={course.data.shortDesc}
-                level={course.data.level}
-                image={course.data.image}
-                {slug}
-                {lang}
-              />
-            );
-          })}
-        </div>
-      )
-      : <p class="empty-state">
-          {lang === 'ca' ? 'Properament nous cursos.' : 'Próximamente nuevos cursos.'}
-        </p>
-    }
+    <div class="cards-grid" id="courses-grid">
+      {courses.map(course => {
+        const { slug } = parseContentPath(course.id);
+        return (
+          <div class="course-card-wrapper" data-category={course.data.category || ''}>
+            <CourseCard
+              title={course.data.title}
+              shortDesc={course.data.shortDesc}
+              level={course.data.level}
+              image={course.data.image}
+              {slug}
+              {lang}
+            />
+          </div>
+        );
+      })}
+    </div>
+    <p class="empty-state" id="courses-empty" hidden>
+      {lang === 'ca' ? 'Properament nous cursos.' : 'Próximamente nuevos cursos.'}
+    </p>
   </div>
 </BaseLayout>
 
@@ -73,4 +55,27 @@ const courses = allCourses
     padding: 3rem 0;
     text-align: center;
   }
+
+  .course-card-wrapper.is-hidden {
+    display: none;
+  }
 </style>
+
+<script is:inline>
+  (function () {
+    var params = new URLSearchParams(window.location.search);
+    var category = params.get('category');
+    if (!category) return;
+    var grid = document.getElementById('courses-grid');
+    if (!grid) return;
+    var wrappers = grid.querySelectorAll('.course-card-wrapper');
+    var visible = 0;
+    wrappers.forEach(function (w) {
+      if (w.getAttribute('data-category') === category) { visible++; }
+      else w.classList.add('is-hidden');
+    });
+    if (!visible) {
+      var empty = document.getElementById('courses-empty');
+      if (empty) empty.hidden = false;
+    }
+  })();</script>

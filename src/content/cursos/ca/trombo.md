@@ -3,6 +3,7 @@ title: Trombó
 order: 7
 level: todos
 image: /uploads/courses/trombo.jpg
+category: vent-metall
 featured: false
 shortDesc: Formació de trombó per a tots els nivells, centrada en tècnica de vara, afinació i interpretació en conjunt.
 ---

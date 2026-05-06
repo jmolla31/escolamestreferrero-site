@@ -3,6 +3,7 @@ title: Saxo
 order: 3
 level: todos
 image: /uploads/courses/saxo.jpg
+category: vent-fusta
 featured: true
 shortDesc: Curso de saxo para alumnado de todos los niveles, con trabajo técnico, respiración y repertorio moderno y clásico.
 ---

@@ -21,6 +21,7 @@ const cursosCollection = defineCollection({
     level: z.enum(['iniciacion', 'elemental', 'medio', 'avanzado', 'todos']),
     shortDesc: z.string(),
     featured: z.boolean().default(false),
+    category: z.enum(['vent-fusta', 'vent-metall', 'percussio', 'grups']).optional(),
   }),
 });
 

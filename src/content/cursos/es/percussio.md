@@ -3,6 +3,7 @@ title: Percusión
 order: 4
 level: todos
 image: /uploads/courses/percussio.jpg
+category: percussio
 featured: false
 shortDesc: "Formación integral en percusión: caja, timbales y láminas, trabajando ritmo, coordinación y musicalidad."
 ---

@@ -3,6 +3,7 @@ title: Tuba
 order: 6
 level: todos
 image: /uploads/courses/tuba.jpg
+category: vent-metall
 featured: false
 shortDesc: Curso de tuba orientado al desarrollo del sonido, la respiración y la base rítmica dentro de la banda.
 ---

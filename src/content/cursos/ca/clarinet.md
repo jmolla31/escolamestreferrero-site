@@ -3,6 +3,7 @@ title: Clarinet
 order: 8
 level: todos
 image: /uploads/courses/clarinet.jpg
+category: vent-fusta
 featured: false
 shortDesc: Curs de clarinet amb enfocament tècnic i musical, adaptat a iniciació, nivell elemental i alumnat avançat.
 ---

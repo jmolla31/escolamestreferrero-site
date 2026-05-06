@@ -3,6 +3,7 @@ title: Trombón
 order: 7
 level: todos
 image: /uploads/courses/trombo.jpg
+category: vent-metall
 featured: false
 shortDesc: Formación de trombón para todos los niveles, centrada en técnica de vara, afinación e interpretación en conjunto.
 ---

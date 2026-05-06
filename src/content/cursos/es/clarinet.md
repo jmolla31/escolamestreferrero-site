@@ -3,6 +3,7 @@ title: Clarinete
 order: 8
 level: todos
 image: /uploads/courses/clarinet.jpg
+category: vent-fusta
 featured: false
 shortDesc: Curso de clarinete con enfoque técnico y musical, adaptado a iniciación, nivel elemental y alumnado avanzado.
 ---
