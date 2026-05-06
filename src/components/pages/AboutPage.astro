@@ -1,0 +1,48 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { useTranslations } from '../../i18n/utils';
+import { getEntry, render } from 'astro:content';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const aboutEntry = await getEntry('generic', `${lang}/about`);
+
+const aboutDescription = aboutEntry?.data?.description || '';
+const { Content } = aboutEntry ? await render(aboutEntry) : { Content: null };
+---
+
+<BaseLayout title={t('about.title')} {lang}>
+  <div class="container section">
+    <SectionHeader title={t('about.title')} />
+
+    <div class="prose about-content">
+      {aboutDescription && (
+        <p class="about-intro">{aboutDescription}</p>
+      )}
+      {Content && <Content lang={lang} />}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .about-content {
+    max-width: 120ch;
+    text-align: justify;
+  }
+
+  .about-intro {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+    margin-bottom: 2rem;
+    border-left: 3px solid var(--color-accent);
+    padding-left: 1rem;
+    text-align: justify;
+  }
+</style>

@@ -46,9 +46,20 @@ const eventosCollection = defineCollection({
   }),
 });
 
+const genericCollection = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/generic' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    order: z.number().default(99),
+    image: z.string().optional(),
+  }),
+});
+
 export const collections = {
   blog: blogCollection,
   cursos: cursosCollection,
   profesores: profesoresCollection,
   eventos: eventosCollection,
+  generic: genericCollection,
 };
