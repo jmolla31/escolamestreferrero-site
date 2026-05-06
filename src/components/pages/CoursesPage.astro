@@ -13,11 +13,27 @@ interface Props {
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 
+const categoryQuery = Astro.url.searchParams.get('category');
+
+const courseCategories: Record<string, string[]> = {
+  'vent-fusta': ['clarinet', 'saxo'],
+  'vent-metall': ['trombo', 'tuba'],
+  'percussio': ['percussio'],
+  'grups': [], // Add group courses if any
+};
+
 const allCourses = await getCollection('cursos');
 const courses = allCourses
   .filter(c => {
-    const { lang: cLang } = parseContentPath(c.id);
-    return cLang === lang;
+    const { lang: cLang, slug } = parseContentPath(c.id);
+    const matchesLang = cLang === lang;
+    
+    if (!categoryQuery) return matchesLang;
+    
+    const categoryCourses = courseCategories[categoryQuery] || [];
+    const matchesCategory = categoryCourses.includes(slug);
+    
+    return matchesLang && matchesCategory;
   })
   .sort((a, b) => a.data.order - b.data.order);
 ---

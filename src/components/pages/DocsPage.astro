@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SectionHeader from '../../components/SectionHeader.astro';
+import { useTranslations } from '../../i18n/utils';
+import type { Lang } from '../../i18n/ui';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout title={t('nav.about.docs')} {lang}>
+  <div class="container section">
+    <SectionHeader title={t('nav.about.docs')} />
+    
+    <div class="pdf-container">
+      <iframe 
+        src="https://assets.escolamestreferrero.com/pec-2026.pdf" 
+        width="100%" 
+        height="800px" 
+        style="border: none;"
+      ></iframe>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .pdf-container {
+    margin-top: 2rem;
+  }
+</style>

@@ -14,8 +14,25 @@ const base = lang === 'es' ? '/es' : '';
 
 const navLinks = [
   { key: 'nav.home' as const, href: `${base}/` },
-  { key: 'nav.about' as const, href: `${base}/sobre-nosaltres/` },
-  { key: 'nav.courses' as const, href: `${base}/cursos/` },
+  { 
+    key: 'nav.about' as const, 
+    href: '#',
+    children: [
+      { key: 'nav.about.ideal' as const, href: `${base}/sobre-nosaltres/` },
+      { key: 'nav.about.calendar' as const, href: `${base}/sobre-nosaltres/calendari/` },
+      { key: 'nav.about.docs' as const, href: `${base}/sobre-nosaltres/documentacio/` },
+    ]
+  },
+  { 
+    key: 'nav.courses' as const, 
+    href: `${base}/cursos/`,
+    children: [
+      { key: 'nav.courses.ventFusta' as const, href: `${base}/cursos/?category=vent-fusta` },
+      { key: 'nav.courses.ventMetall' as const, href: `${base}/cursos/?category=vent-metall` },
+      { key: 'nav.courses.percussio' as const, href: `${base}/cursos/?category=percussio` },
+      { key: 'nav.courses.grups' as const, href: `${base}/cursos/?category=grups` },
+    ]
+  },
   { key: 'nav.teachers' as const, href: `${base}/professors/` },
   { key: 'nav.events' as const, href: `${base}/esdeveniments/` },
   { key: 'nav.blog' as const, href: `${base}/blog/` },
@@ -45,20 +62,34 @@ const navLinks = [
 
     <nav class="main-nav" id="main-navigation" aria-label={lang === 'ca' ? 'Navegació principal' : 'Navegación principal'}>
       <ul role="list">
-        {navLinks.map(({ key, href }) => {
+        {navLinks.map(({ key, href, children }) => {
           const isHome = href === `${base}/`;
           const isActive = isHome
             ? Astro.url.pathname === href || Astro.url.pathname === href.slice(0, -1)
             : Astro.url.pathname.startsWith(href);
           return (
-            <li>
+            <li class:list={['main-nav__item', { 'has-dropdown': children }]}>
               <a
                 href={href}
                 class:list={['main-nav__link', { 'is-active': isActive }]}
                 aria-current={isActive ? 'page' : undefined}
+                aria-haspopup={children ? 'true' : undefined}
+                aria-expanded={children ? 'false' : undefined}
               >
                 {t(key)}
+                {children && <span class="main-nav__dropdown-arrow"></span>}
               </a>
+              {children && (
+                <ul class="main-nav__dropdown">
+                  {children.map(({ key: childKey, href: childHref }) => (
+                    <li>
+                      <a href={childHref} class="main-nav__dropdown-link">
+                        {t(childKey)}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </li>
           );
         })}
@@ -153,6 +184,61 @@ const navLinks = [
   .main-nav__link.is-active {
     color: var(--color-accent);
     background-color: rgba(255, 255, 255, 0.07);
+  }
+
+  .main-nav__item {
+    position: relative;
+  }
+
+  .main-nav__dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--color-brand);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    list-style: none;
+    margin: 0;
+    padding: 0.5rem 0;
+    min-width: 200px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.2s ease;
+    z-index: 100;
+  }
+
+  .main-nav__item:hover .main-nav__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .main-nav__dropdown-link {
+    display: block;
+    padding: 0.5rem 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.15s, background-color 0.15s;
+  }
+
+  .main-nav__dropdown-link:hover {
+    color: var(--color-accent);
+    background-color: rgba(255, 255, 255, 0.07);
+  }
+
+  .main-nav__dropdown-arrow {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid currentColor;
   }
 
   .main-nav__actions {
@@ -277,6 +363,26 @@ const navLinks = [
       font-size: 1.1rem;
       padding: 0.75rem 1rem;
     }
+
+    .main-nav__dropdown {
+      position: static;
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+      box-shadow: none;
+      border: none;
+      background-color: rgba(0, 0, 0, 0.1);
+      margin: 0 0 1rem 1rem;
+      display: none;
+    }
+
+    .main-nav__item.is-dropdown-open .main-nav__dropdown {
+      display: block;
+    }
+
+    .main-nav__dropdown-link {
+      padding: 0.5rem 0;
+    }
   }
 </style>
 
@@ -296,9 +402,20 @@ const navLinks = [
     // Close menu when clicking a link
     const links = nav.querySelectorAll('.main-nav__link');
     links.forEach(link => {
-      link.addEventListener('click', () => {
-        toggle.setAttribute('aria-expanded', 'false');
-        nav.classList.remove('is-open');
+      link.addEventListener('click', (e) => {
+        const isMobile = window.innerWidth <= 992;
+        if (link.getAttribute('aria-haspopup') === 'true') {
+          e.preventDefault();
+          if (isMobile) {
+            const item = link.parentElement;
+            item.classList.toggle('is-dropdown-open');
+            const expanded = link.getAttribute('aria-expanded') === 'true';
+            link.setAttribute('aria-expanded', (!expanded).toString());
+          }
+        } else if (!isMobile || link.getAttribute('aria-haspopup') !== 'true') {
+          toggle.setAttribute('aria-expanded', 'false');
+          nav.classList.remove('is-open');
+        }
       });
     });
   }
